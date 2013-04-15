@@ -26,4 +26,15 @@ class BooleanTypeTest extends PHPUnit_Framework_TestCase
         );
     }
 
+    public function testExtracting()
+    {
+        $typeInstance = new BooleanType($this->getMock("Seven\\RpcBundle\\XmlRpc\\Implementation"));
+        $document = new \DOMDocument();
+        $document->appendChild($valueEl = $document->createElement('boolean', 1));
+
+        $value = $typeInstance->extract($valueEl);
+
+        $this->assertEquals(true, $value);
+    }
+
 }

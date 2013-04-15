@@ -59,4 +59,34 @@ class ObjectTypeTest extends PHPUnit_Framework_TestCase
         );
     }
 
+    public function testExtracting()
+    {
+        $sample = array('prop_a' => 'value_a', 'prop_b' => 'value_b');
+
+        $implementationMock = $this->getMock("Seven\\RpcBundle\\XmlRpc\\Implementation");
+        $typeInstance = new ObjectType($implementationMock);
+
+        $implementationMock->expects($this->any())
+            ->method('extract')
+            ->will($this->returnCallback(function(\DOMElement $element) {
+                if($element->tagName == 'test')
+
+                    return $element->nodeValue;
+                return null;
+            }));
+
+        $document = new \DOMDocument();
+        $document->appendChild($structEl = $document->createElement('struct'));
+        foreach ($sample as $key => $item) {
+            $structEl->appendChild($memberEl = $document->createElement('member'));
+            $memberEl->appendChild($document->createElement('name', $key));
+            $memberEl->appendChild($valueEl = $document->createElement('value'));
+            $valueEl->appendChild($document->createElement('test', $item));
+        }
+
+        $value = $typeInstance->extract($structEl);
+
+        $this->assertEquals($sample, $value);
+    }
+
 }

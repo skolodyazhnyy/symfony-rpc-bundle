@@ -26,4 +26,15 @@ class DateTypeTest extends PHPUnit_Framework_TestCase
         );
     }
 
+    public function testExtracting()
+    {
+        $typeInstance = new DateType($this->getMock("Seven\\RpcBundle\\XmlRpc\\Implementation"));
+        $document = new \DOMDocument();
+        $document->appendChild($valueEl = $document->createElement('dateTime.iso8601', '20101231T12:34:50'));
+
+        $value = $typeInstance->extract($valueEl);
+
+        $this->assertEquals(new \DateTime("12/31/2010 12:34:50"), $value);
+    }
+
 }

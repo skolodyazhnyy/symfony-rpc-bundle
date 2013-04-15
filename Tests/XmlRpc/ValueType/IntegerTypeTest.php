@@ -26,4 +26,15 @@ class IntegerTypeTest extends PHPUnit_Framework_TestCase
         );
     }
 
+    public function testExtracting()
+    {
+        $typeInstance = new IntegerType($this->getMock("Seven\\RpcBundle\\XmlRpc\\Implementation"));
+        $document = new \DOMDocument();
+        $document->appendChild($valueEl = $document->createElement('i4', 123));
+
+        $value = $typeInstance->extract($valueEl);
+
+        $this->assertEquals(123, $value);
+    }
+
 }

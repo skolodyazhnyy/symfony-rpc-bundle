@@ -26,4 +26,15 @@ class BlobTypeTest extends PHPUnit_Framework_TestCase
         );
     }
 
+    public function testExtracting()
+    {
+        $typeInstance = new BlobType($this->getMock("Seven\\RpcBundle\\XmlRpc\\Implementation"));
+        $document = new \DOMDocument();
+        $document->appendChild($valueEl = $document->createElement('double', base64_encode('s-t-r-i-n-g')));
+
+        $value = $typeInstance->extract($valueEl);
+
+        $this->assertEquals('s-t-r-i-n-g', $value);
+    }
+
 }

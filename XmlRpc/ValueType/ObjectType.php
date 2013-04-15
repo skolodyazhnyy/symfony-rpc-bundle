@@ -56,7 +56,7 @@ class ObjectType extends AbstractType
     public function extract(\DOMElement $element)
     {
         $data = array();
-        $items = $this->unwrap($element, 'struct')->childNodes;
+        $items = $element->childNodes;
         for ($index = 0; $index < $items->length; $index++) {
             $item = $items->item($index);
             if ($item instanceof \DOMElement && $item->tagName == 'member') {
@@ -65,7 +65,7 @@ class ObjectType extends AbstractType
                    $item->lastChild->nodeName  != 'value')
                         continue;
 
-                $data[$item->firstChild->nodeValue] = $this->impl->extract($item);
+                $data[$item->firstChild->nodeValue] = $this->impl->extract($item->lastChild->firstChild);
             }
         }
 

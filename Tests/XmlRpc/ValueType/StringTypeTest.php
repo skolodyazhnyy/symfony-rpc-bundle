@@ -26,4 +26,15 @@ class StringTypeTest extends PHPUnit_Framework_TestCase
         );
     }
 
+    public function testExtracting()
+    {
+        $typeInstance = new StringType($this->getMock("Seven\\RpcBundle\\XmlRpc\\Implementation"));
+        $document = new \DOMDocument();
+        $document->appendChild($valueEl = $document->createElement('string', 's-t-r-i-n-g'));
+
+        $value = $typeInstance->extract($valueEl);
+
+        $this->assertEquals('s-t-r-i-n-g', $value);
+    }
+
 }

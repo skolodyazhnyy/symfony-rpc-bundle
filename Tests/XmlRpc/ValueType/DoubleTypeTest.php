@@ -26,4 +26,15 @@ class DoubleTypeTest extends PHPUnit_Framework_TestCase
         );
     }
 
+    public function testExtracting()
+    {
+        $typeInstance = new DoubleType($this->getMock("Seven\\RpcBundle\\XmlRpc\\Implementation"));
+        $document = new \DOMDocument();
+        $document->appendChild($valueEl = $document->createElement('double', 12.3));
+
+        $value = $typeInstance->extract($valueEl);
+
+        $this->assertEquals(12.3, $value);
+    }
+
 }
