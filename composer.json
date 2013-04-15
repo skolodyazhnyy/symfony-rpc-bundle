@@ -1,6 +1,6 @@
 {
-    "name": "seven/rpc-bundle",
-    "description": "This bundle provide easy way to create RPC server",
+    "name": "seven/symfony-rpc-bundle",
+    "description": "This Symfony bundle provide easy way to create XMLRPC server",
     "keywords": [],
     "type": "symfony-bundle",
     "license": "MIT",
