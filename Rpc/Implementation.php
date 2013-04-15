@@ -16,6 +16,12 @@ use Symfony\Component\HttpFoundation\Response;
 
 abstract class Implementation
 {
+
+    /**
+     * @param Request $request
+     * @return mixed
+     */
+
     abstract public function createMethodCall(Request $request);
 
     //abstract public function createMethodResponse(Response $request);

@@ -27,37 +27,37 @@ class ImplementationTypeDetectTest extends PHPUnit_Framework_TestCase
     public function testTypeDetectString()
     {
         $this->assertEquals(ValueType::String, $this->impl->detectType("string"),
-            "Detect string when string is given");
+            "Detect string when string given");
     }
 
     public function testTypeDetectInteger()
     {
         $this->assertEquals(ValueType::Integer, $this->impl->detectType(10),
-            "Detect integer when integer is given");
+            "Detect integer when integer given");
     }
 
     public function testTypeDetectBoolean()
     {
         $this->assertEquals(ValueType::Boolean, $this->impl->detectType(true),
-            "Detect boolean when boolean is given");
+            "Detect boolean when boolean given");
     }
 
     public function testTypeDetectDate()
     {
         $this->assertEquals(ValueType::Date, $this->impl->detectType(new \DateTime("now")),
-            "Detect date in object, instance of DateTime");
+            "Detect date when instance of DateTime given");
     }
 
     public function testTypeDetectDouble()
     {
         $this->assertEquals(ValueType::Double, $this->impl->detectType(11.1),
-            "Detect decimal when decimal is given");
+            "Detect decimal when decimal given");
     }
 
     public function testTypeDetectArray()
     {
         $this->assertEquals(ValueType::Set, $this->impl->detectType(array(1, 2, 3)),
-            "Detect array when array is given");
+            "Detect array when array given");
     }
 
     public function testTypeDetectObject()
@@ -67,13 +67,13 @@ class ImplementationTypeDetectTest extends PHPUnit_Framework_TestCase
         $object->b = "test";
 
         $this->assertEquals(ValueType::Object, $this->impl->detectType($object),
-            "Detect object in the instance of stdClass");
+            "Detect object when instance of stdClass given");
 
         $this->assertEquals(ValueType::Object, $this->impl->detectType(array('a' => 'aValue', 'b' => 'bValue')),
-            "Detect object in associative array");
+            "Detect object when associative array given");
 
         $this->assertEquals(ValueType::Object, $this->impl->detectType(array(0, 'key' => 'value', 1, 2)),
-            "Detect object in array where only one pair is associative");
+            "Detect object when array where only one pair is associative given");
     }
 
 }

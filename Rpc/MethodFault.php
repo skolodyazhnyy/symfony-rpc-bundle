@@ -13,6 +13,7 @@ namespace Seven\RpcBundle\Rpc;
 
 class MethodFault extends MethodResponse
 {
+
     protected $exception;
 
     /**
