@@ -1,20 +1,9 @@
-SevenRpcBundle
-=====================
+Symfony RPC Bundle
+==================
 
-The `SevenRpcBundle` extends the default Symfony2 with a XML-RPC Server implementation.
-This bundle provide you an easy way to create XML RPC webservice. 
+This is a lightweight implementation of Remote Procedure Call (RPC) library for Symfony.
+It provide an easy way to create a XML-RPC web service within standard Symfony controller.
 
+[Quick overview](https://github.com/skolodyazhnyy/symfony-rpc-bundle/blob/master/Resources/doc/Index.md)
 
-Basic usage
----------------------
-
-<pre><code>class XmlRpcController extends Controller {
-
-	public function handleAction() {
-		$server = new Server(new Seven\RpcBundle\XmlRpc\Implementation());
-		$server->addHandler('webservice', 'MyBundle\Model\WebserviceHandler');
-	
-		return $server->handle($this->getRequest());
-	}
-
-}</code></pre>
+[![Build Status](https://travis-ci.org/skolodyazhnyy/symfony-rpc-bundle.png?branch=master)](https://travis-ci.org/skolodyazhnyy/symfony-rpc-bundle)
