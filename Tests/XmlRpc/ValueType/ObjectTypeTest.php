@@ -70,6 +70,7 @@ class ObjectTypeTest extends PHPUnit_Framework_TestCase
             ->method('extract')
             ->will($this->returnCallback(function(\DOMElement $element) {
                 if($element->tagName == 'test')
+
                     return $element->nodeValue;
                 return null;
             }));

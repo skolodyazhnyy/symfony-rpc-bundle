@@ -30,7 +30,7 @@ class Implementation extends BaseImplementation
     protected $types;
 
     /**
-     * @param  Request    $request
+     * @param  Request                                             $request
      * @throws \Seven\RpcBundle\Exception\InvalidMethodCallRequest
      * @throws \Seven\RpcBundle\Exception\XmlRpcSchemaNotFound
      * @return MethodCall
@@ -71,7 +71,7 @@ class Implementation extends BaseImplementation
     }
 
     /**
-     * @param  MethodResponse $response
+     * @param  MethodResponse                                   $response
      * @throws \Seven\RpcBundle\Exception\UnknownMethodResponse
      * @return Response
      */
@@ -175,6 +175,7 @@ class Implementation extends BaseImplementation
             case ValueType::Set:      return new ValueType\ArrayType($this);
             case ValueType::Object:   return new ValueType\ObjectType($this);
         }
+
         return null;
     }
 
@@ -185,21 +186,22 @@ class Implementation extends BaseImplementation
 
     public function detectType($value)
     {
-        if($value === null) {
+        if ($value === null) {
             return ValueType::Null;
-        } else if(is_float($value)) {
+        } elseif (is_float($value)) {
             return ValueType::Double;
-        } else if(is_numeric($value)) {
+        } elseif (is_numeric($value)) {
             return ValueType::Integer;
-        } else if(is_bool($value)) {
+        } elseif (is_bool($value)) {
             return ValueType::Boolean;
-        } else if($value instanceof \DateTime) {
+        } elseif ($value instanceof \DateTime) {
             return ValueType::Date;
-        } else if(is_object($value)) {
+        } elseif (is_object($value)) {
             return ValueType::Object;
-        } else if(is_array($value)) {
+        } elseif (is_array($value)) {
             return $this->isAssociative($value) ? ValueType::Object : ValueType::Set;
         }
+
         return ValueType::String;
     }
 

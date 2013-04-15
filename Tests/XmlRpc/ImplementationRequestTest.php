@@ -47,7 +47,8 @@ class ImplementationRequestTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(array(), $methodCall->getParameters());
     }
 
-    public function testInvalidRequestWitoutMethodName() {
+    public function testInvalidRequestWitoutMethodName()
+    {
         $this->setExpectedException("Seven\\RpcBundle\\Exception\\InvalidMethodCallRequest");
 
         $requestXml = "<?xml version=\"1.0\"?>\n<methodCall><params><param><value><i4>41</i4></value></param></params></methodCall>";
@@ -61,7 +62,8 @@ class ImplementationRequestTest extends PHPUnit_Framework_TestCase
         $impl->createMethodCall($requestMock);
     }
 
-    public function testInvalidRequestWithExtraTags() {
+    public function testInvalidRequestWithExtraTags()
+    {
         $this->setExpectedException("Seven\\RpcBundle\\Exception\\InvalidMethodCallRequest");
 
         $requestXml = "<?xml version=\"1.0\"?>\n<methodCall><params><param><value><i4>41</i4></value></param></params><extra /></methodCall>";

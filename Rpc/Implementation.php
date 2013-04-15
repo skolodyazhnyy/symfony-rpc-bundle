@@ -19,7 +19,7 @@ abstract class Implementation
 {
 
     /**
-     * @param Request $request
+     * @param  Request $request
      * @return mixed
      */
 
