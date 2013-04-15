@@ -26,9 +26,11 @@ different RPC implementations like XML-RPC, JSON-RPC or your own. There is an ex
 which show how you can handle XML-RPC calls.
 
 <pre><code>
-namespace eContester\ApiBundle\Controller;
+namespace Sample\WebserviceBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Seven\RpcBundle\XmlRpc\Implementation as XmlRpcImplementation;
+use Seven\RpcBundle\Server;
 
 class CalcHandler {
 
@@ -40,7 +42,7 @@ class CalcHandler {
 
 }
 
-class XmlRpcController extends Controller
+class WebServiceController extends Controller
 {
     public function handleAction()
     {
