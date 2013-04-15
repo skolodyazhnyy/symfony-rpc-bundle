@@ -1,7 +1,7 @@
 {
     "name": "seven/symfony-rpc-bundle",
     "description": "This Symfony bundle provide easy way to create XMLRPC server",
-    "keywords": [],
+    "keywords": ["Symfony", "XMLRPC", "Server", "XML-RPC", "RPC", "Bundle"],
     "type": "symfony-bundle",
     "license": "MIT",
     "authors": [
@@ -12,6 +12,9 @@
     ],
     "require": {
         "symfony/framework-bundle": "2.1.*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*"
     },
     "autoload": {
         "psr-0": { "Seven\\RpcBundle": "" }
