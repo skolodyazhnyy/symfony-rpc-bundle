@@ -11,6 +11,9 @@
 
 namespace Seven\RpcBundle\XmlRpc;
 
+use Seven\RpcBundle\Exception\InvalidMethodCallRequest;
+use Seven\RpcBundle\Exception\UnknownMethodResponse;
+use Seven\RpcBundle\Exception\XmlRpcSchemaNotFound;
 use Symfony\Component\Config\FileLocator;
 use Seven\RpcBundle\Rpc\Implementation as BaseImplementation;
 use Seven\RpcBundle\Rpc\MethodCall;
@@ -28,8 +31,9 @@ class Implementation extends BaseImplementation
 
     /**
      * @param  Request    $request
+     * @throws \Seven\RpcBundle\Exception\InvalidMethodCallRequest
+     * @throws \Seven\RpcBundle\Exception\XmlRpcSchemaNotFound
      * @return MethodCall
-     * @throws \Exception
      */
 
     public function createMethodCall(Request $request)
@@ -39,11 +43,17 @@ class Implementation extends BaseImplementation
 
         $fileLocator = new FileLocator(dirname(__DIR__) . "/Resources/schema");
 
-        // validate document by xsd schema
+        // lookup for schema
         if(!($schema = $fileLocator->locate("xmlrpc.xsd")))
-            throw new \Exception('The XML-RPC methodCall schema not found');
-        if(!$document->schemaValidate($schema) && $document->firstChild->nodeName == 'methodCall')
-            throw new \Exception('The XML document is not valid XML-RPC methodCall');
+            throw new XmlRpcSchemaNotFound('The XML-RPC methodCall schema not found');
+
+        // validate schema
+        $useInternal = libxml_use_internal_errors(true);
+        $valid = $document->schemaValidate($schema);
+        libxml_use_internal_errors($useInternal);
+
+        if(!$valid && $document->firstChild->nodeName == 'methodCall')
+            throw new InvalidMethodCallRequest('The XML document is not valid XML-RPC methodCall');
 
         $xpath = new \DOMXPath($document);
 
@@ -62,31 +72,28 @@ class Implementation extends BaseImplementation
 
     /**
      * @param  MethodResponse $response
-     * @throws \Exception
+     * @throws \Seven\RpcBundle\Exception\UnknownMethodResponse
      * @return Response
      */
 
     public function createHttpResponse(MethodResponse $response)
     {
-        if ($response instanceof MethodReturn) {
-            $value = $response->getReturnValue();
-            $type = $response->getReturnType();
-        } elseif ($response instanceof MethodFault) {
-            $value = array('message' => $response->getMessage(), 'code' => $response->getCode());
-            $type = null;
-        } else {
-            throw new \Exception("Unknown MethodResponse instance");
-        }
-
         $document = new \DOMDocument(null, "UTF-8");
-        $responseEl = $document->createElement("methodResponse");
-        $paramsEl = $document->createElement("params");
-        $paramEl = $document->createElement("param");
+        $document->appendChild($responseEl = $document->createElement("methodResponse"));
 
-        $document->appendChild($responseEl);
-        $responseEl->appendChild($paramsEl);
-        $paramsEl->appendChild($paramEl);
-        $paramEl->appendChild($this->pack($document, $value, $type));
+        if ($response instanceof MethodReturn) {
+            $paramsEl = $document->createElement("params");
+            $paramEl = $document->createElement("param");
+
+            $responseEl->appendChild($paramsEl);
+            $paramsEl->appendChild($paramEl);
+            $paramEl->appendChild($this->pack($document, $response->getReturnValue(), $response->getReturnType()));
+        } elseif ($response instanceof MethodFault) {
+            $responseEl->appendChild($faultEl = $document->createElement("fault"));
+            $faultEl->appendChild($this->pack($document, array('faultCode' => $response->getCode(), 'faultString' => $response->getMessage()), ValueType::Object));
+        } else {
+            throw new UnknownMethodResponse("Unknown MethodResponse instance");
+        }
 
         return new Response($document->saveXML(), 200, array('content-type' => 'text/xml'));
     }
@@ -147,7 +154,7 @@ class Implementation extends BaseImplementation
         if(empty($this->types[$type]))
             $this->types[$type] = $this->createType($type);
 
-        return $this->types[$type] ?: $this->typeInstance(Value::String);
+        return $this->types[$type] ?: $this->typeInstance(ValueType::String);
     }
 
     /**
@@ -168,7 +175,6 @@ class Implementation extends BaseImplementation
             case ValueType::Set:      return new ValueType\ArrayType($this);
             case ValueType::Object:   return new ValueType\ObjectType($this);
         }
-
         return null;
     }
 
@@ -179,28 +185,21 @@ class Implementation extends BaseImplementation
 
     public function detectType($value)
     {
-        if($value === null)
-
+        if($value === null) {
             return ValueType::Null;
-        if(is_float($value))
-
+        } else if(is_float($value)) {
             return ValueType::Double;
-        if(is_numeric($value))
-
+        } else if(is_numeric($value)) {
             return ValueType::Integer;
-        if(is_bool($value))
-
+        } else if(is_bool($value)) {
             return ValueType::Boolean;
-        if($value instanceof \DateTime)
-
+        } else if($value instanceof \DateTime) {
             return ValueType::Date;
-        if(is_object($value))
-
+        } else if(is_object($value)) {
             return ValueType::Object;
-        if(is_array($value))
-
+        } else if(is_array($value)) {
             return $this->isAssociative($value) ? ValueType::Object : ValueType::Set;
-
+        }
         return ValueType::String;
     }
 

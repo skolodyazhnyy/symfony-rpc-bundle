@@ -53,8 +53,9 @@ abstract class AbstractType implements TypeInterface
         return $element->firstChild;
     }
 
+    // @codeCoverageIgnoreStart
     abstract public function pack(\DOMDocument $document, $value);
 
     abstract public function extract(\DOMElement $element);
-
+    // @codeCoverageIgnoreEnd
 }

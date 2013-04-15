@@ -76,4 +76,10 @@ class ImplementationTypeDetectTest extends PHPUnit_Framework_TestCase
             "Detect object when array where only one pair is associative given");
     }
 
+    public function testTypeDetectNull()
+    {
+        $this->assertEquals(ValueType::Null, $this->impl->detectType(NULL),
+            "Detect NULL when NULL given");
+    }
+
 }

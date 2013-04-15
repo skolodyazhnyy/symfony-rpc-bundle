@@ -14,6 +14,7 @@ namespace Seven\RpcBundle\Rpc;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+// @codeCoverageIgnoreStart
 abstract class Implementation
 {
 
@@ -36,3 +37,4 @@ abstract class Implementation
     //abstract public function createHttpRequest(MethodCall $call);
 
 }
+// @codeCoverageIgnoreEnd
