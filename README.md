@@ -8,7 +8,7 @@ This bundle provide you an easy way to create XML RPC webservice.
 Basic usage
 ---------------------
 
-class XmlRpcController extends Controller {
+<pre><code>class XmlRpcController extends Controller {
 
 	public function handleAction() {
 		$server = new Server(new Seven\RpcBundle\XmlRpc\Implementation());
@@ -17,4 +17,4 @@ class XmlRpcController extends Controller {
 		return $server->handle($this->getRequest());
 	}
 
-}
+}</code></pre>
