@@ -1,7 +1,6 @@
 <?php
-
 /*
- * This file is part of the Symfony bundle XmlRpc/Server.
+ * This file is part of the Symfony bundle Seven/Rpc.
  *
  * (c) Sergey Kolodyazhnyy <sergey.kolodyazhnyy@gmail.com>
  *

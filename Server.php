@@ -15,12 +15,14 @@ use Seven\RpcBundle\Rpc\MethodFault;
 use Seven\RpcBundle\Rpc\MethodCall;
 use Seven\RpcBundle\Rpc\MethodResponse;
 use Seven\RpcBundle\Rpc\Implementation;
+use Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class Server implements Rpc\ServerInterface
 {
     protected $impl;
+    protected $handlers;
 
     /**
      * @param Rpc\Implementation $impl
@@ -66,12 +68,88 @@ class Server implements Rpc\ServerInterface
     /**
      * @param $method
      * @param $parameters
+     * @throws Exception
      * @return mixed
      */
 
     public function call($method, $parameters)
     {
-        return 'some value';
+        if (strpos($method, '.') !== false) {
+            list($handlerName, $method) = explode('.', $method, 2);
+            if($this->hasHandler($handlerName))
+
+                return $this->_call(array($this->getHandler($handlerName), $method), $parameters);
+        } elseif ($this->hasHandler($method) && is_callable($callback = $this->getHandler($method))) {
+            return $this->_call($callback, $parameters);
+        }
+
+        throw new Exception("Method '{$method}' are not defined");
+    }
+
+    /**
+     * @param $callback
+     * @param $parameters
+     * @return mixed
+     */
+
+    protected function _call($callback, $parameters)
+    {
+        return call_user_func_array($callback, $parameters);
+    }
+
+    /**
+     * @param $name
+     * @param $handler
+     * @param  bool      $force
+     * @throws Exception
+     * @return Server
+     */
+
+    public function addHandler($name, $handler, $force = false)
+    {
+        if(isset($this->handlers[$name]) && !$force)
+            throw new Exception("The '{$name}' handler already exists");
+        $this->handlers[$name] = $handler;
+
+        return $this;
+    }
+
+    /**
+     * @param $name
+     * @return mixed
+     */
+
+    public function hasHandler($name)
+    {
+        return $this->handlers[$name];
+    }
+
+    /**
+     * @param $name
+     * @return bool
+     */
+
+    public function getHandler($name)
+    {
+        if(!$this->hasHandler($name))
+
+            return false;
+        if(is_string($this->handlers[$name]))
+            $this->handlers[$name] = new $this->handlers[$name];
+
+        return $this->handlers[$name];
+    }
+
+    /**
+     * @param $name
+     * @return Server
+     */
+
+    public function removeHandler($name)
+    {
+        unset($this->handlers[$name]);
+
+        return $this;
     }
 
 }
