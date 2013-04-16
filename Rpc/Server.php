@@ -151,7 +151,6 @@ class Server implements ServerInterface
     public function removeHandler($name)
     {
         unset($this->handlers[$name]);
-
         return $this;
     }
 
