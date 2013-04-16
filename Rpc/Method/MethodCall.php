@@ -9,7 +9,7 @@
  *
  */
 
-namespace Seven\RpcBundle\Rpc;
+namespace Seven\RpcBundle\Rpc\Method;
 
 class MethodCall
 {
@@ -19,7 +19,7 @@ class MethodCall
     /**
      * @param $methodName
      * @param  array                           $parameters
-     * @return \Seven\RpcBundle\Rpc\MethodCall
+     * @return \Seven\RpcBundle\Rpc\Method\MethodCall
      */
 
     public function __construct($methodName, $parameters = array())

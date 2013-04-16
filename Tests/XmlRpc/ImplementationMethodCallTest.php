@@ -10,12 +10,13 @@
 
 namespace Seven\RpcBundle\Tests\XmlRpc;
 use PHPUnit_Framework_TestCase;
+use Seven\RpcBundle\Rpc\Method\MethodCall;
 use Seven\RpcBundle\XmlRpc\Implementation;
 
-class ImplementationRequestTest extends PHPUnit_Framework_TestCase
+class ImplementationMethodCallTest extends PHPUnit_Framework_TestCase
 {
 
-    public function testRequestReaderWithCorrectCall()
+    public function testExtractingCallWithParameters()
     {
         $requestXml = "<?xml version=\"1.0\"?>\n<methodCall><methodName>examples.getStateName</methodName><params><param><value><i4>41</i4></value></param></params></methodCall>";
 
@@ -31,7 +32,7 @@ class ImplementationRequestTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(array(41), $methodCall->getParameters());
     }
 
-    public function testRequestReaderWithoutParameters()
+    public function testExtractingCallWithoutParameters()
     {
         $requestXml = "<?xml version=\"1.0\"?>\n<methodCall><methodName>examples.getStateName</methodName><params /></methodCall>";
 
@@ -47,9 +48,9 @@ class ImplementationRequestTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(array(), $methodCall->getParameters());
     }
 
-    public function testInvalidRequestWitoutMethodName()
+    public function testExtractingCallWithoutMethodName()
     {
-        $this->setExpectedException("Seven\\RpcBundle\\Exception\\InvalidMethodCallRequest");
+        $this->setExpectedException("Seven\\RpcBundle\\Exception\\InvalidXmlRpcContent");
 
         $requestXml = "<?xml version=\"1.0\"?>\n<methodCall><params><param><value><i4>41</i4></value></param></params></methodCall>";
 
@@ -62,9 +63,9 @@ class ImplementationRequestTest extends PHPUnit_Framework_TestCase
         $impl->createMethodCall($requestMock);
     }
 
-    public function testInvalidRequestWithExtraTags()
+    public function testExtractingCallWithExtraTags()
     {
-        $this->setExpectedException("Seven\\RpcBundle\\Exception\\InvalidMethodCallRequest");
+        $this->setExpectedException("Seven\\RpcBundle\\Exception\\InvalidXmlRpcContent");
 
         $requestXml = "<?xml version=\"1.0\"?>\n<methodCall><params><param><value><i4>41</i4></value></param></params><extra /></methodCall>";
 
@@ -75,6 +76,30 @@ class ImplementationRequestTest extends PHPUnit_Framework_TestCase
             ->will($this->returnValue($requestXml));
 
         $impl->createMethodCall($requestMock);
+    }
+
+    public function testExtractingCallFromResponseRequest()
+    {
+        $this->setExpectedException("Seven\\RpcBundle\\Exception\\InvalidXmlRpcContent");
+
+        $requestXml = "<?xml version=\"1.0\"?>\n<methodResponse><params><param><value><i4>41</i4></value></param></params><extra /></methodResponse>";
+
+        $impl = new Implementation();
+        $requestMock = $this->getMock("Symfony\\Component\\HttpFoundation\\Request");
+        $requestMock->expects($this->once())
+            ->method("getContent")
+            ->will($this->returnValue($requestXml));
+
+        $impl->createMethodCall($requestMock);
+    }
+
+    public function testPackingCall() {
+        $impl = new Implementation();
+        $rpcCall = new MethodCall("examples.getStateName", array(41));
+        $httpRequest = $impl->createHttpRequest($rpcCall);
+
+        $this->assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<methodCall><methodName>examples.getStateName</methodName><params><param><value><int>41</int></value></param></params></methodCall>\n", $httpRequest->getContent());
+        $this->assertEquals("text/xml", $httpRequest->headers->get('Content-Type'));
     }
 
 }

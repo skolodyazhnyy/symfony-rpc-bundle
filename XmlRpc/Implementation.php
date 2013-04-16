@@ -11,15 +11,16 @@
 
 namespace Seven\RpcBundle\XmlRpc;
 
-use Seven\RpcBundle\Exception\InvalidMethodCallRequest;
+use Seven\RpcBundle\Exception\Fault;
+use Seven\RpcBundle\Exception\InvalidXmlRpcContent;
 use Seven\RpcBundle\Exception\UnknownMethodResponse;
 use Seven\RpcBundle\Exception\XmlRpcSchemaNotFound;
 use Symfony\Component\Config\FileLocator;
 use Seven\RpcBundle\Rpc\Implementation as BaseImplementation;
-use Seven\RpcBundle\Rpc\MethodCall;
-use Seven\RpcBundle\Rpc\MethodResponse;
-use Seven\RpcBundle\Rpc\MethodFault;
-use Seven\RpcBundle\Rpc\MethodReturn;
+use Seven\RpcBundle\Rpc\Method\MethodCall;
+use Seven\RpcBundle\Rpc\Method\MethodResponse;
+use Seven\RpcBundle\Rpc\Method\MethodFault;
+use Seven\RpcBundle\Rpc\Method\MethodReturn;
 use Seven\RpcBundle\XmlRpc\ValueType;
 use Seven\RpcBundle\XmlRpc\ValueType\AbstractType;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,7 +32,7 @@ class Implementation extends BaseImplementation
 
     /**
      * @param  Request                                             $request
-     * @throws \Seven\RpcBundle\Exception\InvalidMethodCallRequest
+     * @throws \Seven\RpcBundle\Exception\InvalidXmlRpcContent
      * @throws \Seven\RpcBundle\Exception\XmlRpcSchemaNotFound
      * @return MethodCall
      */
@@ -52,8 +53,8 @@ class Implementation extends BaseImplementation
         $valid = $document->schemaValidate($schema);
         libxml_use_internal_errors($useInternal);
 
-        if(!$valid && $document->firstChild->nodeName == 'methodCall')
-            throw new InvalidMethodCallRequest('The XML document is not valid XML-RPC methodCall');
+        if(!$valid || $document->firstChild->nodeName != 'methodCall')
+            throw new InvalidXmlRpcContent('The XML document is not valid XML-RPC methodCall');
 
         $xpath = new \DOMXPath($document);
 
@@ -78,7 +79,7 @@ class Implementation extends BaseImplementation
 
     public function createHttpResponse(MethodResponse $response)
     {
-        $document = new \DOMDocument(null, "UTF-8");
+        $document = new \DOMDocument("1.0", "UTF-8");
         $document->appendChild($responseEl = $document->createElement("methodResponse"));
 
         if ($response instanceof MethodReturn) {
@@ -96,6 +97,75 @@ class Implementation extends BaseImplementation
         }
 
         return new Response($document->saveXML(), 200, array('content-type' => 'text/xml'));
+    }
+
+    /**
+     * @param Response $response
+     * @throws \Seven\RpcBundle\Exception\Fault
+     * @throws \Seven\RpcBundle\Exception\XmlRpcSchemaNotFound
+     * @throws \Seven\RpcBundle\Exception\InvalidXmlRpcContent
+     * @return MethodResponse
+     */
+
+    public function createMethodResponse(Response $response)
+    {
+        $document = new \DOMDocument();
+        $document->loadXML($response->getContent());
+
+        $fileLocator = new FileLocator(dirname(__DIR__) . "/Resources/schema");
+
+        // lookup for schema
+        if(!($schema = $fileLocator->locate("xmlrpc.xsd")))
+            throw new XmlRpcSchemaNotFound('The XML-RPC methodResponse schema not found');
+
+        // validate schema
+        $useInternal = libxml_use_internal_errors(true);
+        $valid = $document->schemaValidate($schema);
+        libxml_use_internal_errors($useInternal);
+
+        if(!$valid || $document->firstChild->nodeName != 'methodResponse')
+            throw new InvalidXmlRpcContent('The XML document is not valid XML-RPC methodCall');
+
+        $xpath = new \DOMXPath($document);
+
+        // it's fault
+        if($faultEl = $xpath->query("//methodResponse/fault")->item(0)) {
+            $struct = $this->extract($faultEl->firstChild);
+            return new MethodFault(new Fault($struct['faultString'], $struct['faultCode']));
+        }
+
+        // extract parameters
+        $parameters = array();
+        $rawParameters = $xpath->query("//methodResponse/params/param");
+        for ($index = 0; $index < $rawParameters->length; $index++) {
+            $item = $rawParameters->item($index);
+            $parameters[] = $this->extract($item->firstChild);
+        }
+
+        return new MethodReturn(reset($parameters));
+    }
+
+    /**
+     * @param MethodCall $call
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @return Request
+     */
+    public function createHttpRequest(MethodCall $call, Request $request = null)
+    {
+        $document = new \DOMDocument("1.0", "UTF-8");
+        $document->appendChild($callEl = $document->createElement("methodCall"));
+
+        $callEl->appendChild($methodName = $document->createElement("methodName", $call->getMethodName()));
+        $callEl->appendChild($paramsEl = $document->createElement("params"));
+        foreach($call->getParameters() as $parameter) {
+            $paramsEl->appendChild($paramEl = $document->createElement("param"));
+            $paramEl->appendChild($this->pack($document, $parameter));
+        }
+
+        $httpRequest = $request ? new Request($request->query, $request->request, $request->attributes, $request->cookies, $request->files, $request->server, $document->saveXML())
+                            : new Request(array(), array(), array(), array(), array(), array(), $document->saveXML());
+        $httpRequest->headers->add(array("content-type" => "text/xml"));
+        return $httpRequest;
     }
 
     /**

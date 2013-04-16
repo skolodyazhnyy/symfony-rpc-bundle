@@ -11,7 +11,7 @@
 namespace Seven\RpcBundle\Tests;
 
 use PHPUnit_Framework_TestCase;
-use Seven\RpcBundle\Server;
+use Seven\RpcBundle\Rpc\Server;
 
 class ServerTest extends PHPUnit_Framework_TestCase
 {
@@ -20,7 +20,7 @@ class ServerTest extends PHPUnit_Framework_TestCase
         $httpRequestMock = $this->getMock("Symfony\\Component\\HttpFoundation\\Request");
         $httpResponseMock = $this->getMock("Symfony\\Component\\HttpFoundation\\Response");
         $implementationMock = $this->getMock("Seven\\RpcBundle\\Rpc\\Implementation");
-        $methodCallMock = $this->getMock("Seven\\RpcBundle\\Rpc\\MethodCall", array(), array(), '', false);
+        $methodCallMock = $this->getMock("Seven\\RpcBundle\\Rpc\\Method\\MethodCall", array(), array(), '', false);
         $handlerMock = $this->getMock("stdClass", array('op'));
 
         $handlerMock->expects($this->once())
@@ -43,7 +43,7 @@ class ServerTest extends PHPUnit_Framework_TestCase
 
         $implementationMock->expects($this->once())
             ->method('createHttpResponse')
-            ->with($this->isInstanceOf("Seven\\RpcBundle\\Rpc\\MethodReturn"))
+            ->with($this->isInstanceOf("Seven\\RpcBundle\\Rpc\\Method\\MethodReturn"))
             ->will($this->returnValue($httpResponseMock));
 
         $server = new Server($implementationMock);

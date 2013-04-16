@@ -12,7 +12,7 @@
 namespace Seven\RpcBundle\Exception;
 use Exception;
 
-class InvalidMethodCallRequest extends  Exception
+class InvalidXmlRpcContent extends  Exception
 {
 
 }

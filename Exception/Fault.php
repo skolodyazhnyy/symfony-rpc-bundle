@@ -6,12 +6,13 @@
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
+ *
  */
 
-namespace Seven\RpcBundle\Tests\XmlRpc\Asserts;
-use Seven\RpcBundle\Rpc\Method\MethodResponse;
+namespace Seven\RpcBundle\Exception;
+use Exception;
 
-class MethodUnknownResponse extends MethodResponse
+class Fault extends  Exception
 {
 
 }

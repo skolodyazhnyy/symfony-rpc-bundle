@@ -11,6 +11,8 @@
 
 namespace Seven\RpcBundle\Rpc;
 
+use Seven\RpcBundle\Rpc\Method\MethodCall;
+use Seven\RpcBundle\Rpc\Method\MethodResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -25,7 +27,12 @@ abstract class Implementation
 
     abstract public function createMethodCall(Request $request);
 
-    //abstract public function createMethodResponse(Response $request);
+    /**
+     * @param Response $response
+     * @return MethodResponse
+     */
+
+    abstract public function createMethodResponse(Response $response);
 
     /**
      * @param  MethodResponse $response
@@ -34,7 +41,13 @@ abstract class Implementation
 
     abstract public function createHttpResponse(MethodResponse $response);
 
-    //abstract public function createHttpRequest(MethodCall $call);
+    /**
+     * @param MethodCall $call
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @return Request
+     */
+
+    abstract public function createHttpRequest(MethodCall $call, Request $request = null);
 
 }
 // @codeCoverageIgnoreEnd

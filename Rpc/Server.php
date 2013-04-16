@@ -9,24 +9,24 @@
  *
  */
 
-namespace Seven\RpcBundle;
+namespace Seven\RpcBundle\Rpc;
 use Seven\RpcBundle\Exception\MethodNotExists;
-use Seven\RpcBundle\Rpc\MethodReturn;
-use Seven\RpcBundle\Rpc\MethodFault;
-use Seven\RpcBundle\Rpc\MethodCall;
-use Seven\RpcBundle\Rpc\MethodResponse;
+use Seven\RpcBundle\Rpc\Method\MethodReturn;
+use Seven\RpcBundle\Rpc\Method\MethodFault;
+use Seven\RpcBundle\Rpc\Method\MethodCall;
+use Seven\RpcBundle\Rpc\Method\MethodResponse;
 use Seven\RpcBundle\Rpc\Implementation;
 use Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class Server implements Rpc\ServerInterface
+class Server implements ServerInterface
 {
     protected $impl;
     protected $handlers;
 
     /**
-     * @param Rpc\Implementation $impl
+     * @param Implementation $impl
      */
 
     public function __construct(Implementation $impl)

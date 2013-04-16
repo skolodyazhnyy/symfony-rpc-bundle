@@ -9,8 +9,14 @@
  *
  */
 
-namespace Seven\RpcBundle\Rpc;
+namespace Seven\RpcBundle\XmlRpc;
+use Seven\RpcBundle\Rpc\Server as BaseServer;
 
-abstract class MethodResponse
+class Server extends BaseServer
 {
+
+    public function __construct() {
+        parent::__construct(new Implementation());
+    }
+
 }
