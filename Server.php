@@ -10,6 +10,7 @@
  */
 
 namespace Seven\RpcBundle;
+use Seven\RpcBundle\Exception\MethodNotExists;
 use Seven\RpcBundle\Rpc\MethodReturn;
 use Seven\RpcBundle\Rpc\MethodFault;
 use Seven\RpcBundle\Rpc\MethodCall;
@@ -68,22 +69,24 @@ class Server implements Rpc\ServerInterface
     /**
      * @param $method
      * @param $parameters
-     * @throws Exception
+     * @throws MethodNotExists
      * @return mixed
      */
 
     public function call($method, $parameters)
     {
         if (strpos($method, '.') !== false) {
-            list($handlerName, $method) = explode('.', $method, 2);
-            if($this->hasHandler($handlerName))
-
-                return $this->_call(array($this->getHandler($handlerName), $method), $parameters);
+            list($handlerName, $methodName) = explode('.', $method, 2);
+            if($this->hasHandler($handlerName)) {
+                if(is_callable($callback = array($this->getHandler($handlerName), $methodName))) {
+                    return $this->_call($callback, $parameters);
+                }
+            }
         } elseif ($this->hasHandler($method) && is_callable($callback = $this->getHandler($method))) {
             return $this->_call($callback, $parameters);
         }
 
-        throw new Exception("Method '{$method}' are not defined");
+        throw new MethodNotExists("Method '{$method}' are not defined");
     }
 
     /**
@@ -121,7 +124,7 @@ class Server implements Rpc\ServerInterface
 
     public function hasHandler($name)
     {
-        return $this->handlers[$name];
+        return isset($this->handlers[$name]);
     }
 
     /**
@@ -131,12 +134,12 @@ class Server implements Rpc\ServerInterface
 
     public function getHandler($name)
     {
-        if(!$this->hasHandler($name))
-
+        if(!$this->hasHandler($name)) {
             return false;
-        if(is_string($this->handlers[$name]))
+        }
+        if(is_string($this->handlers[$name])) {
             $this->handlers[$name] = new $this->handlers[$name];
-
+        }
         return $this->handlers[$name];
     }
 
