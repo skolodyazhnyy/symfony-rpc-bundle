@@ -15,7 +15,8 @@ use Seven\RpcBundle\Rpc\Server as BaseServer;
 class Server extends BaseServer
 {
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct(new Implementation());
     }
 

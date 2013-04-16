@@ -48,6 +48,19 @@ class ImplementationMethodCallTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(array(), $methodCall->getParameters());
     }
 
+    public function testExtractingCallFromEmptyRequest()
+    {
+        $this->setExpectedException("Seven\\RpcBundle\\Exception\\InvalidXmlRpcContent");
+        $impl = new Implementation();
+        $requestMock = $this->getMock("Symfony\\Component\\HttpFoundation\\Request");
+        $requestMock->expects($this->once())
+            ->method("getContent")
+            ->will($this->returnValue(""));
+
+        $impl->createMethodCall($requestMock);
+    }
+
+
     public function testExtractingCallWithoutMethodName()
     {
         $this->setExpectedException("Seven\\RpcBundle\\Exception\\InvalidXmlRpcContent");

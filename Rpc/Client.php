@@ -29,11 +29,12 @@ class Client implements ClientInterface
 
     /**
      * @param $webServiceUrl
-     * @param Implementation $impl
+     * @param Implementation     $impl
      * @param TransportInterface $transport
      */
 
-    public function __construct($webServiceUrl, Implementation $impl, TransportInterface $transport = null) {
+    public function __construct($webServiceUrl, Implementation $impl, TransportInterface $transport = null)
+    {
         $this->impl = $impl;
         $this->webServiceUrl = $webServiceUrl;
         $this->transport = $transport ?: new TransportCurl();
@@ -41,42 +42,47 @@ class Client implements ClientInterface
 
     /**
      * @param $methodName
-     * @param array $parameters
+     * @param  array             $parameters
      * @return mixed|null|string
      */
 
-    public function call($methodName, $parameters = array()) {
+    public function call($methodName, $parameters = array())
+    {
         return $this->_call(new MethodCall($methodName, $parameters));
     }
 
     /**
-     * @param MethodCall $call
+     * @param  MethodCall                                       $call
      * @throws \Exception
      * @throws \Seven\RpcBundle\Exception\UnknownMethodResponse
-     * @param MethodCall $call
+     * @param  MethodCall                                       $call
      * @return null|string
      */
 
-    protected function _call(MethodCall $call) {
+    protected function _call(MethodCall $call)
+    {
         $methodResponse = $this->_handle($call);
 
         if($methodResponse instanceof MethodFault)
             throw $methodResponse->getException();
         if($methodResponse instanceof MethodReturn)
+
             return $methodResponse->getReturnValue();
 
         throw new UnknownMethodResponse('Unable to determine method response type');
     }
 
     /**
-     * @param MethodCall $call
+     * @param  MethodCall     $call
      * @return MethodResponse
      */
 
-    protected function _handle(MethodCall $call) {
+    protected function _handle(MethodCall $call)
+    {
         $request = Request::create($this->webServiceUrl, 'GET');
         $request = $this->impl->createHttpRequest($call, $request);
         $response = $this->transport->makeRequest($request);
+
         return $this->impl->createMethodResponse($response);
     }
 

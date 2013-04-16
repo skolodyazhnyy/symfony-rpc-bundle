@@ -18,7 +18,7 @@ class MethodCall
 
     /**
      * @param $methodName
-     * @param  array                           $parameters
+     * @param  array                                  $parameters
      * @return \Seven\RpcBundle\Rpc\Method\MethodCall
      */
 

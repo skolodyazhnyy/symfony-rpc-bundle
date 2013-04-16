@@ -31,7 +31,7 @@ class Implementation extends BaseImplementation
     protected $types;
 
     /**
-     * @param  Request                                             $request
+     * @param  Request                                         $request
      * @throws \Seven\RpcBundle\Exception\InvalidXmlRpcContent
      * @throws \Seven\RpcBundle\Exception\XmlRpcSchemaNotFound
      * @return MethodCall
@@ -40,7 +40,6 @@ class Implementation extends BaseImplementation
     public function createMethodCall(Request $request)
     {
         $document = new \DOMDocument();
-        $document->loadXML($request->getContent());
 
         $fileLocator = new FileLocator(dirname(__DIR__) . "/Resources/schema");
 
@@ -50,6 +49,8 @@ class Implementation extends BaseImplementation
 
         // validate schema
         $useInternal = libxml_use_internal_errors(true);
+        if($content = $request->getContent())
+            $document->loadXML($content);
         $valid = $document->schemaValidate($schema);
         libxml_use_internal_errors($useInternal);
 
@@ -100,7 +101,7 @@ class Implementation extends BaseImplementation
     }
 
     /**
-     * @param Response $response
+     * @param  Response                                        $response
      * @throws \Seven\RpcBundle\Exception\Fault
      * @throws \Seven\RpcBundle\Exception\XmlRpcSchemaNotFound
      * @throws \Seven\RpcBundle\Exception\InvalidXmlRpcContent
@@ -110,7 +111,6 @@ class Implementation extends BaseImplementation
     public function createMethodResponse(Response $response)
     {
         $document = new \DOMDocument();
-        $document->loadXML($response->getContent());
 
         $fileLocator = new FileLocator(dirname(__DIR__) . "/Resources/schema");
 
@@ -120,6 +120,8 @@ class Implementation extends BaseImplementation
 
         // validate schema
         $useInternal = libxml_use_internal_errors(true);
+        if($content =$response->getContent())
+            $document->loadXML($content);
         $valid = $document->schemaValidate($schema);
         libxml_use_internal_errors($useInternal);
 
@@ -129,8 +131,9 @@ class Implementation extends BaseImplementation
         $xpath = new \DOMXPath($document);
 
         // it's fault
-        if($faultEl = $xpath->query("//methodResponse/fault")->item(0)) {
+        if ($faultEl = $xpath->query("//methodResponse/fault")->item(0)) {
             $struct = $this->extract($faultEl->firstChild);
+
             return new MethodFault(new Fault($struct['faultString'], $struct['faultCode']));
         }
 
@@ -146,8 +149,8 @@ class Implementation extends BaseImplementation
     }
 
     /**
-     * @param MethodCall $call
-     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param  MethodCall                                $call
+     * @param  \Symfony\Component\HttpFoundation\Request $request
      * @return Request
      */
     public function createHttpRequest(MethodCall $call, Request $request = null)
@@ -157,7 +160,7 @@ class Implementation extends BaseImplementation
 
         $callEl->appendChild($methodName = $document->createElement("methodName", $call->getMethodName()));
         $callEl->appendChild($paramsEl = $document->createElement("params"));
-        foreach($call->getParameters() as $parameter) {
+        foreach ($call->getParameters() as $parameter) {
             $paramsEl->appendChild($paramEl = $document->createElement("param"));
             $paramEl->appendChild($this->pack($document, $parameter));
         }
@@ -165,6 +168,7 @@ class Implementation extends BaseImplementation
         $httpRequest = $request ? new Request($request->query, $request->request, $request->attributes, $request->cookies, $request->files, $request->server, $document->saveXML())
                             : new Request(array(), array(), array(), array(), array(), array(), $document->saveXML());
         $httpRequest->headers->add(array("content-type" => "text/xml"));
+
         return $httpRequest;
     }
 

@@ -77,8 +77,8 @@ class Server implements ServerInterface
     {
         if (strpos($method, '.') !== false) {
             list($handlerName, $methodName) = explode('.', $method, 2);
-            if($this->hasHandler($handlerName)) {
-                if(is_callable($callback = array($this->getHandler($handlerName), $methodName))) {
+            if ($this->hasHandler($handlerName)) {
+                if (is_callable($callback = array($this->getHandler($handlerName), $methodName))) {
                     return $this->_call($callback, $parameters);
                 }
             }
@@ -134,12 +134,13 @@ class Server implements ServerInterface
 
     public function getHandler($name)
     {
-        if(!$this->hasHandler($name)) {
+        if (!$this->hasHandler($name)) {
             return false;
         }
-        if(is_string($this->handlers[$name])) {
+        if (is_string($this->handlers[$name])) {
             $this->handlers[$name] = new $this->handlers[$name];
         }
+
         return $this->handlers[$name];
     }
 
@@ -151,6 +152,7 @@ class Server implements ServerInterface
     public function removeHandler($name)
     {
         unset($this->handlers[$name]);
+
         return $this;
     }
 

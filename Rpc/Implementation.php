@@ -28,7 +28,7 @@ abstract class Implementation
     abstract public function createMethodCall(Request $request);
 
     /**
-     * @param Response $response
+     * @param  Response       $response
      * @return MethodResponse
      */
 
@@ -42,8 +42,8 @@ abstract class Implementation
     abstract public function createHttpResponse(MethodResponse $response);
 
     /**
-     * @param MethodCall $call
-     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param  MethodCall                                $call
+     * @param  \Symfony\Component\HttpFoundation\Request $request
      * @return Request
      */
 

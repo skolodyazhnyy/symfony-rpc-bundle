@@ -18,7 +18,7 @@ interface TransportInterface
 {
 
     /**
-     * @param Request $request
+     * @param  Request  $request
      * @return Response
      */
 

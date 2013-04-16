@@ -77,6 +77,18 @@ class ImplementationMethodResponseTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("Too many parameters.", $methodResponse->getMessage());
     }
 
+    public function testExtractingEmptyResponse() {
+        $this->setExpectedException("Seven\\RpcBundle\\Exception\\InvalidXmlRpcContent");
+        $impl = new Implementation();
+
+        $httpResponse = $this->getMock("Symfony\\Component\\HttpFoundation\\Response");
+        $httpResponse->expects($this->once())
+            ->method('getContent')
+            ->will($this->returnValue(""));
+
+        $impl->createMethodResponse($httpResponse);
+    }
+
     public function testExtractingInvalidResponse() {
         $this->setExpectedException("Seven\\RpcBundle\\Exception\\InvalidXmlRpcContent");
 
