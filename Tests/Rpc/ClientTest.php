@@ -28,20 +28,14 @@ class ClientTest extends \PHPUnit_Framework_TestCase
 
         $implMock->expects($this->once())
             ->method("createHttpRequest")
-            ->with(
-                $this->callback(function(MethodCall $methodCall) {
-                    return $methodCall->getMethodName() == "method.name" &&
-                        $methodCall->getParameters() == array('param_1', 'param_2');
-                }),
-                $this->callback(function(Request $request) {
-                    return $request->getSchemeAndHttpHost() . $request->getRequestUri() == "http://webservice.url/path";
-                })
-            )
+            ->with($this->callback(function(MethodCall $methodCall) {
+                return $methodCall->getMethodName() == "method.name" &&
+                    $methodCall->getParameters() == array('param_1', 'param_2');
+            }))
             ->will($this->returnValue($httpRequestMock));
 
         $transportMock->expects($this->once())
             ->method("makeRequest")
-            ->with($this->equalTo($httpRequestMock))
             ->will($this->returnValue($httpResponseMock));
 
         $implMock->expects($this->once())

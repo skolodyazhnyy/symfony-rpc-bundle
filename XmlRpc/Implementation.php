@@ -126,7 +126,7 @@ class Implementation extends BaseImplementation
         libxml_use_internal_errors($useInternal);
 
         if(!$valid || $document->firstChild->nodeName != 'methodResponse')
-            throw new InvalidXmlRpcContent('The XML document is not valid XML-RPC methodCall');
+            throw new InvalidXmlRpcContent('The XML document is not valid XML-RPC methodResponse');
 
         $xpath = new \DOMXPath($document);
 
@@ -149,11 +149,10 @@ class Implementation extends BaseImplementation
     }
 
     /**
-     * @param  MethodCall                                $call
-     * @param  \Symfony\Component\HttpFoundation\Request $request
+     * @param  MethodCall $call
      * @return Request
      */
-    public function createHttpRequest(MethodCall $call, Request $request = null)
+    public function createHttpRequest(MethodCall $call)
     {
         $document = new \DOMDocument("1.0", "UTF-8");
         $document->appendChild($callEl = $document->createElement("methodCall"));
@@ -165,8 +164,7 @@ class Implementation extends BaseImplementation
             $paramEl->appendChild($this->pack($document, $parameter));
         }
 
-        $httpRequest = $request ? new Request($request->query, $request->request, $request->attributes, $request->cookies, $request->files, $request->server, $document->saveXML())
-                            : new Request(array(), array(), array(), array(), array(), array(), $document->saveXML());
+        $httpRequest = new Request(array(), array(), array(), array(), array(), array(), $document->saveXML());
         $httpRequest->headers->add(array("content-type" => "text/xml"));
 
         return $httpRequest;

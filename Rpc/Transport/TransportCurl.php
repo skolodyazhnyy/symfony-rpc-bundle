@@ -26,7 +26,7 @@ class TransportCurl implements TransportInterface
         $options = array(
             CURLOPT_POST                => 1,
             CURLOPT_HEADER              => 0,
-            CURLOPT_URL                 => $request->getBaseUrl() . '/' . $request->getRequestUri(),
+            CURLOPT_URL                 => $request->getSchemeAndHttpHost() . $request->getRequestUri(),
             CURLOPT_FRESH_CONNECT       => 1,
             CURLOPT_RETURNTRANSFER      => 1,
             CURLOPT_FORBID_REUSE        => 1,
@@ -36,12 +36,11 @@ class TransportCurl implements TransportInterface
 
         $curl = curl_init();
         curl_setopt_array($curl, $options);
-        if (!$responseBody = curl_exec($curl)) {
+        if (!($responseBody = curl_exec($curl))) {
             $code = curl_errno($curl);
 
             return new Response("", 500);
         }
-        curl_close($curl);
 
         return new Response($responseBody);
     }
