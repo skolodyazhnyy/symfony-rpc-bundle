@@ -41,9 +41,12 @@ class Server implements ServerInterface
 
     public function handle(Request $request)
     {
-        $methodCall = $this->impl->createMethodCall($request);
-        $methodResponse = $this->_handle($methodCall);
-
+        try {
+            $methodCall = $this->impl->createMethodCall($request);
+            $methodResponse = $this->_handle($methodCall);
+        } catch (\Exception $e) {
+            $methodResponse = new MethodFault($e);
+        }
         return $this->impl->createHttpResponse($methodResponse);
     }
 
@@ -54,14 +57,10 @@ class Server implements ServerInterface
 
     protected function _handle(MethodCall $methodCall)
     {
-        try {
-            $response = $this->call($methodCall->getMethodName(), $methodCall->getParameters());
+        $response = $this->call($methodCall->getMethodName(), $methodCall->getParameters());
 
-            if(!($response instanceof MethodResponse))
-                $response = new MethodReturn($response);
-        } catch (\Exception $e) {
-            $response = new MethodFault($e);
-        }
+        if(!($response instanceof MethodResponse))
+            $response = new MethodReturn($response);
 
         return $response;
     }
