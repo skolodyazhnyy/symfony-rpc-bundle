@@ -95,7 +95,8 @@ class ServerTest extends PHPUnit_Framework_TestCase
         $this->assertSame($httpResponseMock, $httpResponse);
     }
 
-    public function testServerCallWithCallback() {
+    public function testServerCallWithCallback()
+    {
         $implementationMock = $this->getMock("Seven\\RpcBundle\\Rpc\\Implementation");
         $callbackMock = $this->getMock('stdClass', array('callbackMethod'));
 
@@ -104,14 +105,14 @@ class ServerTest extends PHPUnit_Framework_TestCase
             ->with($this->equalTo("parameter_1"), $this->equalTo("parameter_2"))
             ->will($this->returnValue("result_value"));
 
-
         $server = new Server($implementationMock);
         $server->addHandler('rpcMethodName', array($callbackMock, 'callbackMethod'));
 
         $this->assertEquals("result_value", $server->call('rpcMethodName', array("parameter_1", "parameter_2")));
     }
 
-    public function testServerCallWithObject() {
+    public function testServerCallWithObject()
+    {
         $implementationMock = $this->getMock("Seven\\RpcBundle\\Rpc\\Implementation");
         $server = new Server($implementationMock);
         $server->addHandler('rpcMethodGroup', new \Seven\RpcBundle\Tests\Rpc\Asserts\ServerHandler());
@@ -119,7 +120,8 @@ class ServerTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("parameter_1:parameter_2", $server->call('rpcMethodGroup.concat', array("parameter_1", "parameter_2")));
     }
 
-    public function testServerCallWithClassName() {
+    public function testServerCallWithClassName()
+    {
         $implementationMock = $this->getMock("Seven\\RpcBundle\\Rpc\\Implementation");
         $server = new Server($implementationMock);
         $server->addHandler('rpcMethodGroup', "Seven\\RpcBundle\\Tests\\Rpc\\Asserts\\ServerHandler");
@@ -127,7 +129,8 @@ class ServerTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("parameter_1:parameter_2", $server->call('rpcMethodGroup.concat', array("parameter_1", "parameter_2")));
     }
 
-    public function testServerCallExceptionInvalidGroupname() {
+    public function testServerCallExceptionInvalidGroupname()
+    {
         $this->setExpectedException("Seven\\RpcBundle\\Exception\\MethodNotExists");
 
         $implementationMock = $this->getMock("Seven\\RpcBundle\\Rpc\\Implementation");
@@ -136,7 +139,8 @@ class ServerTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("parameter_1:parameter_2", $server->call('rpcMethodGroup.concat', array("parameter_1", "parameter_2")));
     }
 
-    public function testServerCallExceptionInvalidMethodname() {
+    public function testServerCallExceptionInvalidMethodname()
+    {
         $this->setExpectedException("Seven\\RpcBundle\\Exception\\MethodNotExists");
 
         $implementationMock = $this->getMock("Seven\\RpcBundle\\Rpc\\Implementation");
@@ -145,7 +149,8 @@ class ServerTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("parameter_1:parameter_2", $server->call('concat', array("parameter_1", "parameter_2")));
     }
 
-    public function testServerCallExceptionInvalidMethodnameInGroup() {
+    public function testServerCallExceptionInvalidMethodnameInGroup()
+    {
         $this->setExpectedException("Seven\\RpcBundle\\Exception\\MethodNotExists");
 
         $implementationMock = $this->getMock("Seven\\RpcBundle\\Rpc\\Implementation");
@@ -154,7 +159,8 @@ class ServerTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("parameter_1:parameter_2", $server->call('rpcMethodGroup.nonexists', array("parameter_1", "parameter_2")));
     }
 
-    public function testServerCallExceptionInvalidCallback() {
+    public function testServerCallExceptionInvalidCallback()
+    {
         $this->setExpectedException("Seven\\RpcBundle\\Exception\\MethodNotExists");
 
         $implementationMock = $this->getMock("Seven\\RpcBundle\\Rpc\\Implementation");

@@ -60,7 +60,6 @@ class ImplementationMethodCallTest extends PHPUnit_Framework_TestCase
         $impl->createMethodCall($requestMock);
     }
 
-
     public function testExtractingCallWithoutMethodName()
     {
         $this->setExpectedException("Seven\\RpcBundle\\Exception\\InvalidXmlRpcContent");
@@ -106,7 +105,8 @@ class ImplementationMethodCallTest extends PHPUnit_Framework_TestCase
         $impl->createMethodCall($requestMock);
     }
 
-    public function testPackingCall() {
+    public function testPackingCall()
+    {
         $impl = new Implementation();
         $rpcCall = new MethodCall("examples.getStateName", array(41));
         $httpRequest = $impl->createHttpRequest($rpcCall);

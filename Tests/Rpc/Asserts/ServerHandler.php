@@ -13,8 +13,10 @@ namespace Seven\RpcBundle\Tests\Rpc\Asserts;
 class ServerHandler
 {
 
-    public function concat() {
+    public function concat()
+    {
         $args = func_get_args();
+
         return implode(':', $args);
     }
 

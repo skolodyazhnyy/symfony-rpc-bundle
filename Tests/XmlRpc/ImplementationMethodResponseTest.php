@@ -48,7 +48,8 @@ class ImplementationMethodResponseTest extends PHPUnit_Framework_TestCase
         $httpResponse = $impl->createHttpResponse($response);
     }
 
-    public function testExtractingValueResponse() {
+    public function testExtractingValueResponse()
+    {
         $impl = new Implementation();
 
         $httpResponse = $this->getMock("Symfony\\Component\\HttpFoundation\\Response");
@@ -62,7 +63,8 @@ class ImplementationMethodResponseTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("test", $methodResponse->getReturnValue());
     }
 
-    public function testExtractingFaultResponse() {
+    public function testExtractingFaultResponse()
+    {
         $impl = new Implementation();
 
         $httpResponse = $this->getMock("Symfony\\Component\\HttpFoundation\\Response");
@@ -77,7 +79,8 @@ class ImplementationMethodResponseTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("Too many parameters.", $methodResponse->getMessage());
     }
 
-    public function testExtractingEmptyResponse() {
+    public function testExtractingEmptyResponse()
+    {
         $this->setExpectedException("Seven\\RpcBundle\\Exception\\InvalidXmlRpcContent");
         $impl = new Implementation();
 
@@ -89,7 +92,8 @@ class ImplementationMethodResponseTest extends PHPUnit_Framework_TestCase
         $impl->createMethodResponse($httpResponse);
     }
 
-    public function testExtractingInvalidResponse() {
+    public function testExtractingInvalidResponse()
+    {
         $this->setExpectedException("Seven\\RpcBundle\\Exception\\InvalidXmlRpcContent");
 
         $impl = new Implementation();

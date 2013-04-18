@@ -17,7 +17,8 @@ use Symfony\Component\HttpFoundation\Request;
 class ClientTest extends \PHPUnit_Framework_TestCase
 {
 
-    public function testSuccessCall() {
+    public function testSuccessCall()
+    {
         $implMock = $this->getMock("Seven\\RpcBundle\\Rpc\\Implementation");
         $transportMock = $this->getMock("Seven\\RpcBundle\\Rpc\\Transport\\TransportInterface");
         $httpRequestMock = $this->getMock("Symfony\\Component\\HttpFoundation\\Request");

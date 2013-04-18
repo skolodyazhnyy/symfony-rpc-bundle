@@ -47,6 +47,7 @@ class Server implements ServerInterface
         } catch (\Exception $e) {
             $methodResponse = new MethodFault($e);
         }
+
         return $this->impl->createHttpResponse($methodResponse);
     }
 
