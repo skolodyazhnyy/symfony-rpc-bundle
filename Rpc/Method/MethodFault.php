@@ -18,11 +18,13 @@ class MethodFault extends MethodResponse
 
     /**
      * @param \Exception $exception
+     * @param null       $callId
      */
 
-    public function __construct(\Exception $exception)
+    public function __construct(\Exception $exception, $callId = null)
     {
         $this->exception = $exception;
+        parent::__construct($callId);
     }
 
     /**

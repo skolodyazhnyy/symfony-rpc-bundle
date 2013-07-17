@@ -11,7 +11,7 @@
 
 namespace Seven\RpcBundle\Exception;
 
-class InvalidXmlRpcContent extends  InvalidRpcContent
+class InvalidJsonRpcContent extends  InvalidRpcContent
 {
 
 }

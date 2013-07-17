@@ -17,14 +17,16 @@ class MethodReturn extends MethodResponse
     protected $returnType = null;
 
     /**
-     * @param string $returnValue
-     * @param null   $returnType
+     * @param null $returnValue
+     * @param null $returnType
+     * @param null $callId
      */
 
-    public function __construct($returnValue = null, $returnType = null)
+    public function __construct($returnValue = null, $returnType = null, $callId = null)
     {
         $this->returnType = $returnType;
         $this->returnValue = $returnValue;
+        parent::__construct($callId);
     }
 
     /**

@@ -13,4 +13,25 @@ namespace Seven\RpcBundle\Rpc\Method;
 
 abstract class MethodResponse
 {
+
+    protected $callId = null;
+
+    /**
+     * @param null $callId
+     */
+
+    public function __construct($callId = null)
+    {
+        $this->callId = $callId;
+    }
+
+    /**
+     * @return null|string|int
+     */
+
+    public function getCallId()
+    {
+        return $this->callId;
+    }
+
 }

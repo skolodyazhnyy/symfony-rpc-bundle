@@ -10,8 +10,9 @@
  */
 
 namespace Seven\RpcBundle\Exception;
+use Exception;
 
-class InvalidXmlRpcContent extends  InvalidRpcContent
+class InvalidJsonRpcVersion extends  Exception
 {
 
 }

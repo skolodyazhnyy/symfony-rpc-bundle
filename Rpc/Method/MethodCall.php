@@ -15,17 +15,19 @@ class MethodCall
 {
     protected $methodName;
     protected $parameters;
+    protected $callId;
 
     /**
      * @param $methodName
-     * @param  array                                  $parameters
-     * @return \Seven\RpcBundle\Rpc\Method\MethodCall
+     * @param array $parameters
+     * @param null  $callId
      */
 
-    public function __construct($methodName, $parameters = array())
+    public function __construct($methodName, $parameters = array(), $callId = null)
     {
         $this->methodName = $methodName;
         $this->parameters = $parameters;
+        $this->callId     = $callId;
     }
 
     /**
@@ -44,6 +46,15 @@ class MethodCall
     public function getParameters()
     {
         return $this->parameters;
+    }
+
+    /**
+     * @return string|int|null
+     */
+
+    public function getCallId()
+    {
+        return $this->callId;
     }
 
 }

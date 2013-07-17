@@ -9,9 +9,15 @@
  *
  */
 
-namespace Seven\RpcBundle\Exception;
+namespace Seven\RpcBundle\JsonRpc;
+use Seven\RpcBundle\Rpc\Server as BaseServer;
 
-class InvalidXmlRpcContent extends  InvalidRpcContent
+class Server extends BaseServer
 {
+
+    public function __construct()
+    {
+        parent::__construct(new Implementation());
+    }
 
 }
