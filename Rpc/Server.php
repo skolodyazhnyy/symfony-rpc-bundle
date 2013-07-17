@@ -75,17 +75,16 @@ class Server implements ServerInterface
 
     public function call($method, $parameters)
     {
-        if (strpos($method, '.') !== false) {
+        if ($this->hasHandler($method) && is_callable($callback = $this->getHandler($method))) {
+            return $this->_call($callback, $parameters);
+        } elseif (strpos($method, '.') !== false) {
             list($handlerName, $methodName) = explode('.', $method, 2);
             if ($this->hasHandler($handlerName)) {
                 if (is_callable($callback = array($this->getHandler($handlerName), $methodName))) {
                     return $this->_call($callback, $parameters);
                 }
             }
-        } elseif ($this->hasHandler($method) && is_callable($callback = $this->getHandler($method))) {
-            return $this->_call($callback, $parameters);
         }
-
         throw new MethodNotExists("Method '{$method}' are not defined");
     }
 
