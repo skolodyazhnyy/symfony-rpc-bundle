@@ -17,6 +17,21 @@ use Symfony\Component\HttpFoundation\Response;
 class TransportCurl implements TransportInterface
 {
     /**
+     * Custom options for curl.
+     * @var array
+     */
+    protected $options;
+
+    /**
+     * Constructor.
+     * @param array $options Custom options for curl.
+     */
+    public function __construct($options = array())
+    {
+        $this->options = $options;
+    }
+
+    /**
      * @param  Request  $request
      * @return Response
      */
@@ -31,8 +46,12 @@ class TransportCurl implements TransportInterface
             CURLOPT_RETURNTRANSFER      => 1,
             CURLOPT_FORBID_REUSE        => 1,
             CURLOPT_TIMEOUT             => 4,
-            CURLOPT_POSTFIELDS          => $request->getContent()
+            CURLOPT_POSTFIELDS          => $request->getContent(),
         );
+
+        foreach ($this->options as $key => $value) {
+            $options[$key] = $value;
+        }
 
         $curl = curl_init();
         curl_setopt_array($curl, $options);
