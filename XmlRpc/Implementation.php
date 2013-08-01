@@ -31,6 +31,17 @@ class Implementation extends BaseImplementation
     protected $types;
 
     /**
+     * Should schema be validated? Default is true.
+     * @var boolean
+     */
+    protected $validateSchema = true;
+
+    public function __construct($validateSchema = true)
+    {
+        $this->validateSchema = $validateSchema;
+    }
+
+    /**
      * @param  Request                                         $request
      * @throws \Seven\RpcBundle\Exception\InvalidXmlRpcContent
      * @throws \Seven\RpcBundle\Exception\XmlRpcSchemaNotFound
@@ -43,19 +54,22 @@ class Implementation extends BaseImplementation
 
         $fileLocator = new FileLocator(dirname(__DIR__) . "/Resources/schema");
 
-        // lookup for schema
-        if(!($schema = $fileLocator->locate("xmlrpc.xsd")))
-            throw new XmlRpcSchemaNotFound('The XML-RPC methodCall schema not found');
-
-        // validate schema
-        $useInternal = libxml_use_internal_errors(true);
         if($content = $request->getContent())
             $document->loadXML($content);
-        $valid = $document->schemaValidate($schema);
-        libxml_use_internal_errors($useInternal);
+        
+        if ($this->validateSchema) {
+            // lookup for schema
+            if(!($schema = $fileLocator->locate("xmlrpc.xsd")))
+                throw new XmlRpcSchemaNotFound('The XML-RPC methodCall schema not found');
 
-        if(!$valid || $document->firstChild->nodeName != 'methodCall')
-            throw new InvalidXmlRpcContent('The XML document is not valid XML-RPC methodCall');
+            // validate schema
+            $useInternal = libxml_use_internal_errors(true);
+            $valid = $document->schemaValidate($schema);
+            libxml_use_internal_errors($useInternal);
+
+            if(!$valid || $document->firstChild->nodeName != 'methodCall')
+                throw new InvalidXmlRpcContent('The XML document is not valid XML-RPC methodCall');
+        }
 
         $xpath = new \DOMXPath($document);
 
@@ -114,19 +128,22 @@ class Implementation extends BaseImplementation
 
         $fileLocator = new FileLocator(dirname(__DIR__) . "/Resources/schema");
 
-        // lookup for schema
-        if(!($schema = $fileLocator->locate("xmlrpc.xsd")))
-            throw new XmlRpcSchemaNotFound('The XML-RPC methodResponse schema not found');
-
-        // validate schema
-        $useInternal = libxml_use_internal_errors(true);
         if($content = $response->getContent())
             $document->loadXML($content);
-        $valid = $document->schemaValidate($schema);
-        libxml_use_internal_errors($useInternal);
+        
+        if ($this->validateSchema) {
+            // lookup for schema
+            if(!($schema = $fileLocator->locate("xmlrpc.xsd")))
+                throw new XmlRpcSchemaNotFound('The XML-RPC methodResponse schema not found');
 
-        if(!$valid || $document->firstChild->nodeName != 'methodResponse')
-            throw new InvalidXmlRpcContent('The XML document is not valid XML-RPC methodResponse');
+            // validate schema
+            $useInternal = libxml_use_internal_errors(true);
+            $valid = $document->schemaValidate($schema);
+            libxml_use_internal_errors($useInternal);
+
+            if(!$valid || $document->firstChild->nodeName != 'methodResponse')
+                throw new InvalidXmlRpcContent('The XML document is not valid XML-RPC methodResponse');
+        }
 
         $xpath = new \DOMXPath($document);
 

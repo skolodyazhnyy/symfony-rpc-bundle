@@ -16,9 +16,9 @@ use Seven\RpcBundle\Rpc\Transport\TransportInterface;
 class Client extends BaseClient
 {
 
-    public function __construct($webServiceUrl, TransportInterface $transport = null)
+    public function __construct($webServiceUrl, TransportInterface $transport = null, $implementation = null)
     {
-        parent::__construct($webServiceUrl, new Implementation(), $transport);
+        parent::__construct($webServiceUrl, $implementation === null ? new Implementation() : $implementation, $transport);
     }
 
 }
