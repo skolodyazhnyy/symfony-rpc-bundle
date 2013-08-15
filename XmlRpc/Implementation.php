@@ -50,7 +50,7 @@ class Implementation extends BaseImplementation
         libxml_use_internal_errors($useInternal);
 
         if(!$this->validateXml($document, "methodCall")) {
-            return false;
+            throw new InvalidXmlRpcContent('The XML document has not valid XML-RPC content');
         }
 
         $xpath = new \DOMXPath($document);
@@ -86,7 +86,7 @@ class Implementation extends BaseImplementation
         libxml_use_internal_errors($useInternal);
 
         if(!$valid || ($rootNodeName && $document->firstChild->nodeName != $rootNodeName))
-            throw new InvalidXmlRpcContent('The XML document has not valid XML-RPC content');
+            return false;
 
         return true;
     }
@@ -153,7 +153,7 @@ class Implementation extends BaseImplementation
         libxml_use_internal_errors($useInternal);
 
         if(!$this->validateXml($document, "methodResponse")) {
-            return false;
+            throw new InvalidXmlRpcContent('The XML document has not valid XML-RPC content');
         }
 
         $xpath = new \DOMXPath($document);
