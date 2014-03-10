@@ -204,8 +204,9 @@ class Implementation extends BaseImplementation
 
     public function extract(\DOMNode $element)
     {
-        if($element->tagName == 'value')
+        if ($element instanceof \DOMElement && $element->tagName == 'value') {
             $element = $element->firstChild;
+        }
 
         switch ($element->tagName) {
             case "array":
