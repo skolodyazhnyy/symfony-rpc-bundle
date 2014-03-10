@@ -59,7 +59,7 @@ class Implementation extends BaseImplementation
         $methodName = (string) $xpath->query("//methodCall/methodName")->item(0)->nodeValue;
         // extract parameters
         $parameters = array();
-        $rawParameters = $xpath->query("//methodCall/params/param");
+        $rawParameters = $xpath->query("//methodCall/params/param/value");
         for ($index = 0; $index < $rawParameters->length; $index++) {
             $item = $rawParameters->item($index);
             $parameters[] = $this->extract($item->firstChild);
