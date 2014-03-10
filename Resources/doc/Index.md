@@ -5,7 +5,7 @@ This is a lightweight implementation of Remote Procedure Call (RPC) library for 
 It provide an easy way to create a XML-RPC web service within standard Symfony controller.
 
 Basic Server usage
--------------
+------------------
 
 First, you have to create a regular Symfony controller and define an action which will be used to
 handle RPC requests. You need to assign an URL to this action using standard Symfony routing
@@ -22,7 +22,7 @@ The RPC Server class allow you to handle HTTP request and create valid HTTP resp
 different RPC implementations like XML-RPC, JSON-RPC or your own. There is an example below,
 which show how you can handle XML-RPC calls.
 
-<pre><code>
+```php
 namespace Sample\WebserviceBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -53,4 +53,14 @@ class WebServiceController extends Controller
         return $server->handle($this->getRequest());
     }
 }
-</code></pre>
+```
+
+Basic Client usage
+------------------
+
+```php
+$client = new Seven\RpcBundle\XmlRpc\Client("http://xmlrpcservice/endpoint");
+
+echo $client->call('calc.add', array(1, 2)); // echo 3
+echo $client->call('calc.sub', array(2, 3)); // echo -1
+```
