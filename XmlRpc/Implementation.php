@@ -62,7 +62,9 @@ class Implementation extends BaseImplementation
         $rawParameters = $xpath->query("//methodCall/params/param/value");
         for ($index = 0; $index < $rawParameters->length; $index++) {
             $item = $rawParameters->item($index);
-            $parameters[] = $this->extract($item->firstChild);
+            if ($item instanceof \DOMElement) {
+                $parameters[] = $this->extract($item);
+            }
         }
 
         return new MethodCall($methodName, $parameters);
@@ -166,10 +168,12 @@ class Implementation extends BaseImplementation
 
         // extract parameters
         $parameters = array();
-        $rawParameters = $xpath->query("//methodResponse/params/param");
+        $rawParameters = $xpath->query("//methodResponse/params/param/value");
         for ($index = 0; $index < $rawParameters->length; $index++) {
             $item = $rawParameters->item($index);
-            $parameters[] = $this->extract($item->firstChild);
+            if ($item instanceof \DOMElement) {
+                $parameters[] = $this->extract($item);
+            }
         }
 
         return new MethodReturn(reset($parameters));
@@ -198,18 +202,14 @@ class Implementation extends BaseImplementation
     }
 
     /**
-     * @param  \DOMNode $element
+     * @param  \DOMElement $element
      * @return string
      */
 
-    public function extract(\DOMNode $element)
+    public function extract(\DOMElement $element)
     {
-        if (!$element instanceof \DOMElement) {
-            return null;
-        }
-        
         if ($element->tagName == 'value') {
-            $element = $element->firstChild;
+            $element = $this->unwrap($element);
         }
 
         switch ($element->tagName) {
@@ -316,11 +316,27 @@ class Implementation extends BaseImplementation
 
     protected function isAssociative($value)
     {
-        foreach((array) $value as $key => $value)
-            if(!is_numeric($key))
-
+        foreach ((array) $value as $key => $value) {
+            if(!is_numeric($key)) {
                 return true;
+            }
+        }
         return false;
+    }
+
+    /**
+     * @param \DOMElement $element
+     * @return \DOMElement
+     */
+    protected function unwrap(\DOMElement $element)
+    {
+        for ($i = 0; $i < $element->childNodes->length; $i++) {
+            $item = $element->childNodes->item($i);
+            if ($item instanceof \DOMElement) {
+                return $item;
+            }
+        }
+        return $element;
     }
 
 }

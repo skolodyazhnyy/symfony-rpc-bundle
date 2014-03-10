@@ -18,7 +18,18 @@ class ImplementationMethodCallTest extends PHPUnit_Framework_TestCase
 
     public function testExtractingCallWithParameters()
     {
-        $requestXml = "<?xml version=\"1.0\"?>\n<methodCall><methodName>examples.getStateName</methodName><params><param><value><i4>41</i4></value></param></params></methodCall>";
+        $requestXml = "<?xml version=\"1.0\"?>
+        <methodCall>
+            <methodName>examples.getStateName</methodName>
+            <params>
+                <param>
+                    <value>
+                        <i4>41</i4>
+                    </value>
+                </param>
+            </params>
+        </methodCall>
+        ";
 
         $impl = new Implementation();
         $requestMock = $this->getMock("Symfony\\Component\\HttpFoundation\\Request");
@@ -34,7 +45,11 @@ class ImplementationMethodCallTest extends PHPUnit_Framework_TestCase
 
     public function testExtractingCallWithoutParameters()
     {
-        $requestXml = "<?xml version=\"1.0\"?>\n<methodCall><methodName>examples.getStateName</methodName><params /></methodCall>";
+        $requestXml = "<?xml version=\"1.0\"?>
+        <methodCall>
+            <methodName>examples.getStateName</methodName>
+            <params />
+        </methodCall>";
 
         $impl = new Implementation();
         $requestMock = $this->getMock("Symfony\\Component\\HttpFoundation\\Request");
@@ -64,7 +79,16 @@ class ImplementationMethodCallTest extends PHPUnit_Framework_TestCase
     {
         $this->setExpectedException("Seven\\RpcBundle\\Exception\\InvalidXmlRpcContent");
 
-        $requestXml = "<?xml version=\"1.0\"?>\n<methodCall><params><param><value><i4>41</i4></value></param></params></methodCall>";
+        $requestXml = "<?xml version=\"1.0\"?>
+        <methodCall>
+            <params>
+                <param>
+                    <value>
+                        <i4>41</i4>
+                    </value>
+                </param>
+            </params>
+        </methodCall>";
 
         $impl = new Implementation();
         $requestMock = $this->getMock("Symfony\\Component\\HttpFoundation\\Request");
@@ -79,7 +103,17 @@ class ImplementationMethodCallTest extends PHPUnit_Framework_TestCase
     {
         $this->setExpectedException("Seven\\RpcBundle\\Exception\\InvalidXmlRpcContent");
 
-        $requestXml = "<?xml version=\"1.0\"?>\n<methodCall><params><param><value><i4>41</i4></value></param></params><extra /></methodCall>";
+        $requestXml = "<?xml version=\"1.0\"?>
+        <methodCall>
+            <params>
+                <param>
+                    <value>
+                        <i4>41</i4>
+                    </value>
+                </param>
+            </params>
+            <extra />
+        </methodCall>";
 
         $impl = new Implementation();
         $requestMock = $this->getMock("Symfony\\Component\\HttpFoundation\\Request");
@@ -94,7 +128,15 @@ class ImplementationMethodCallTest extends PHPUnit_Framework_TestCase
     {
         $this->setExpectedException("Seven\\RpcBundle\\Exception\\InvalidXmlRpcContent");
 
-        $requestXml = "<?xml version=\"1.0\"?>\n<methodResponse><params><param><value><i4>41</i4></value></param></params><extra /></methodResponse>";
+        $requestXml = "<?xml version=\"1.0\"?>
+        <methodResponse>
+            <params>
+                <param>
+                    <value><i4>41</i4></value>
+                </param>
+            </params>
+            <extra />
+        </methodResponse>";
 
         $impl = new Implementation();
         $requestMock = $this->getMock("Symfony\\Component\\HttpFoundation\\Request");
@@ -111,7 +153,17 @@ class ImplementationMethodCallTest extends PHPUnit_Framework_TestCase
         $rpcCall = new MethodCall("examples.getStateName", array(41));
         $httpRequest = $impl->createHttpRequest($rpcCall);
 
-        $this->assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<methodCall><methodName>examples.getStateName</methodName><params><param><value><int>41</int></value></param></params></methodCall>\n", $httpRequest->getContent());
+        $this->assertXmlStringEqualsXmlString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+        <methodCall>
+            <methodName>examples.getStateName</methodName>
+            <params>
+                <param>
+                    <value>
+                        <int>41</int>
+                    </value>
+                </param>
+            </params>
+        </methodCall>", $httpRequest->getContent());
         $this->assertEquals("text/xml", $httpRequest->headers->get('Content-Type'));
     }
 
