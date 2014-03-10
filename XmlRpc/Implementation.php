@@ -204,7 +204,11 @@ class Implementation extends BaseImplementation
 
     public function extract(\DOMNode $element)
     {
-        if ($element instanceof \DOMElement && $element->tagName == 'value') {
+        if (!$element instanceof \DOMElement) {
+            return null;
+        }
+        
+        if ($element->tagName == 'value') {
             $element = $element->firstChild;
         }
 
