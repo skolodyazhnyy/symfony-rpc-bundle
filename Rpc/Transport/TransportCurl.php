@@ -45,8 +45,10 @@ class TransportCurl implements TransportInterface
             CURLOPT_FRESH_CONNECT       => 1,
             CURLOPT_RETURNTRANSFER      => 1,
             CURLOPT_FORBID_REUSE        => 1,
-            CURLOPT_TIMEOUT             => 4,
+            CURLOPT_TIMEOUT             => 20,
             CURLOPT_POSTFIELDS          => $request->getContent(),
+            CURLOPT_SSL_VERIFYHOST      => false,
+            CURLOPT_SSL_VERIFYPEER      => false
         );
 
         foreach ($this->options as $key => $value) {
@@ -55,10 +57,12 @@ class TransportCurl implements TransportInterface
 
         $curl = curl_init();
         curl_setopt_array($curl, $options);
-        if (!($responseBody = curl_exec($curl))) {
-            $code = curl_errno($curl);
 
-            return new Response("", 500);
+        $responseBody = curl_exec($curl);
+        if (!$responseBody) {
+            $code = curl_errno($curl);
+            $error = curl_error($curl);
+            return new Response($error, $code);
         }
 
         return new Response($responseBody);
