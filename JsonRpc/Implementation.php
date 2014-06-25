@@ -42,21 +42,26 @@ class Implementation extends BaseImplementation
 
     public function createMethodCall(Request $request)
     {
-        if(!($content = $request->getContent()))
+        $content = $request->getContent();
+        if (empty($content)) {
             throw new InvalidJsonRpcContent('The JSON-RPC request is empty', self::ERROR_INVALID_REQUEST);
+        }
 
         $data = json_decode($content, true);
 
-        if(empty($data) || json_last_error() != JSON_ERROR_NONE)
+        if (is_null($data)) {
             throw new InvalidJsonRpcContent('The JSON-RPC call is not valid', self::ERROR_PARSING);
+        }
 
-        if(empty($data['jsonrpc']) || version_compare($data['jsonrpc'], '2.0') < 0)
+        if (empty($data['jsonrpc']) || version_compare($data['jsonrpc'], '2.0', '<')) {
             throw new InvalidJsonRpcVersion('The JSON-RPC call version is not supported', self::ERROR_SERVER_ERROR);
+        }
 
-        if(empty($data['method']) || !isset($data['params']))
+        if (empty($data['method']) || !isset($data['params'])) {
             throw new InvalidJsonRpcContent('The JSON-RPC call must have method and params properties', self::ERROR_INVALID_REQUEST);
+        }
 
-        return new MethodCall($data['method'], $data['params'], isset($data['id']) ? $data['id'] : NULL);
+        return new MethodCall($data['method'], $data['params'], isset($data['id']) ? $data['id'] : null);
     }
 
     /**
@@ -79,8 +84,9 @@ class Implementation extends BaseImplementation
             throw new UnknownMethodResponse("Unknown MethodResponse instance");
         }
 
-        if($response->getCallId())
+        if ($response->getCallId()) {
             $data['id'] = $response->getCallId();
+        }
 
         return new Response(json_encode($data), 200, array('content-type' => 'text/json'));
     }
@@ -94,24 +100,30 @@ class Implementation extends BaseImplementation
 
     public function createMethodResponse(Response $response)
     {
-        if($content = $response->getContent())
+        $content = $response->getContent();
+        if (empty($content)) {
             throw new InvalidJsonRpcContent('The JSON-RPC response is empty');
+        }
 
         $data = json_decode($content, true);
 
-        if(empty($data) || json_last_error() != JSON_ERROR_NONE)
+        if (is_null($data)) {
             throw new InvalidJsonRpcContent('The JSON-RPC response is not valid', self::ERROR_PARSING);
+        }
 
-        if(empty($data['jsonrpc']) || version_compare($data['jsonrpc'], '2.0.0', '<'))
+        if (empty($data['jsonrpc']) || version_compare($data['jsonrpc'], '2.0', '<')) {
             throw new InvalidJsonRpcVersion('The JSON-RPC response version is not supported');
+        }
 
         if (isset($data['result'])) {
             return new MethodReturn($data['result']);
         } elseif (isset($data['error'])) {
-            if(!isset($data['error']['message']))
+            if (!isset($data['error']['message'])) {
                 throw new InvalidJsonRpcContent('The JSON-RPC fault message is not passed');
-            if(!isset($data['error']['code']))
+            }
+            if (!isset($data['error']['code'])) {
                 throw new InvalidJsonRpcContent('The JSON-RPC fault code is not passed');
+            }
 
             return new MethodFault(new Fault($data['error']['message'], $data['error']['code']));
         }
