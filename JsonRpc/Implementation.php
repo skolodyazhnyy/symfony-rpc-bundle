@@ -53,7 +53,7 @@ class Implementation extends BaseImplementation
             throw new InvalidJsonRpcContent('The JSON-RPC call is not valid', self::ERROR_PARSING);
         }
 
-        if (empty($data['jsonrpc']) || version_compare($data['jsonrpc'], '2.0') < 0) {
+        if (empty($data['jsonrpc']) || version_compare($data['jsonrpc'], '2.0', '<')) {
             throw new InvalidJsonRpcVersion('The JSON-RPC call version is not supported', self::ERROR_SERVER_ERROR);
         }
 
@@ -111,7 +111,7 @@ class Implementation extends BaseImplementation
             throw new InvalidJsonRpcContent('The JSON-RPC response is not valid', self::ERROR_PARSING);
         }
 
-        if (empty($data['jsonrpc']) || version_compare($data['jsonrpc'], '2.0.0', '<')) {
+        if (empty($data['jsonrpc']) || version_compare($data['jsonrpc'], '2.0', '<')) {
             throw new InvalidJsonRpcVersion('The JSON-RPC response version is not supported');
         }
 
