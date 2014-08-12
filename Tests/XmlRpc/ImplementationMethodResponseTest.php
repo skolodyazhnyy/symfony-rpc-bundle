@@ -106,4 +106,45 @@ class ImplementationMethodResponseTest extends PHPUnit_Framework_TestCase
         $impl->createMethodResponse($httpResponse);
     }
 
+    public function testExtractingStructResponse()
+    {
+        $responseXml = "<?xml version='1.0'?>
+        <methodResponse>
+            <params>
+                <param>
+                    <value>
+                        <struct>
+                            <member>
+                                <name>fooName</name>
+                                <value>
+                                    <string>fooValue</string>
+                                </value>
+                            </member>
+                            <member>
+                                <name>barName</name>
+                                <value>
+                                    <int>42</int>
+                                </value>
+                            </member>
+                        </struct>
+                    </value>
+                </param>
+            </params>
+        </methodResponse>
+        ";
+
+        $expectedResponseValues = array('fooName' => 'fooValue', 'barName' => 42);
+
+        $impl = new Implementation();
+
+        $httpResponse = $this->getMock("Symfony\\Component\\HttpFoundation\\Response");
+        $httpResponse->expects($this->once())
+            ->method('getContent')
+            ->will($this->returnValue($responseXml));
+
+        $methodResponse = $impl->createMethodResponse($httpResponse);
+
+        $this->assertInstanceOf("Seven\\RpcBundle\\Rpc\\Method\\MethodReturn", $methodResponse);
+        $this->assertEquals($expectedResponseValues, $methodResponse->getReturnValue());
+    }
 }

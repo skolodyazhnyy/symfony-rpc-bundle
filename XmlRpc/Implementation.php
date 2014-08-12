@@ -158,6 +158,7 @@ class Implementation extends BaseImplementation
         // validate schema
         $useInternal = libxml_use_internal_errors(true);
         if ($content = $response->getContent()) {
+            $document->preserveWhiteSpace = false;
             $document->loadXML($content);
         }
 
