@@ -65,7 +65,7 @@ class ServerTest extends PHPUnit_Framework_TestCase
         $handlerMock->expects($this->once())
             ->method('op')
             ->with($this->equalTo('parameter_1'), $this->equalTo('parameter_2'))
-            ->will($this->returnCallback(function() {
+            ->will($this->returnCallback(function () {
                 throw new \Exception('Test', 10);
             }));
 

@@ -15,7 +15,6 @@ use Seven\RpcBundle\Rpc\Method\MethodReturn;
 use Seven\RpcBundle\Rpc\Method\MethodFault;
 use Seven\RpcBundle\Rpc\Method\MethodCall;
 use Seven\RpcBundle\Rpc\Method\MethodResponse;
-use Seven\RpcBundle\Rpc\Implementation;
 use Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
