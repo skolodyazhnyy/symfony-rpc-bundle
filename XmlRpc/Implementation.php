@@ -45,6 +45,7 @@ class Implementation extends BaseImplementation
         // Load content
         $useInternal = libxml_use_internal_errors(true);
         if ($content = $request->getContent()) {
+            $document->preserveWhiteSpace = false;
             $document->loadXML($content);
         }
 

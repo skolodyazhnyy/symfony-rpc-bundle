@@ -15,6 +15,7 @@ use Seven\RpcBundle\XmlRpc\ValueType\ArrayType;
 
 class ArrayTypeTest extends PHPUnit_Framework_TestCase
 {
+
     public function testPacking()
     {
         $implementationMock = $this->getMock("Seven\\RpcBundle\\XmlRpc\\Implementation");
@@ -47,9 +48,10 @@ class ArrayTypeTest extends PHPUnit_Framework_TestCase
         $implementationMock->expects($this->any())
             ->method('extract')
             ->will($this->returnCallback(function (\DOMElement $element) {
-                if($element->tagName == 'test')
-
+                if ($element->tagName == 'test') {
                     return $element->nodeValue;
+                }
+
                 return null;
             }));
 
