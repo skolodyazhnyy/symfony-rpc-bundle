@@ -29,7 +29,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
 
         $implMock->expects($this->once())
             ->method("createHttpRequest")
-            ->with($this->callback(function(MethodCall $methodCall) {
+            ->with($this->callback(function (MethodCall $methodCall) {
                 return $methodCall->getMethodName() == "method.name" &&
                     $methodCall->getParameters() == array('param_1', 'param_2');
             }))

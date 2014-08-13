@@ -15,12 +15,13 @@ use Seven\RpcBundle\XmlRpc\ValueType\ArrayType;
 
 class ArrayTypeTest extends PHPUnit_Framework_TestCase
 {
+
     public function testPacking()
     {
         $implementationMock = $this->getMock("Seven\\RpcBundle\\XmlRpc\\Implementation");
         $implementationMock->expects($this->any())
             ->method('pack')
-            ->will($this->returnCallback(function($document) {
+            ->will($this->returnCallback(function ($document) {
                 /** @var $document \DOMDocument */
 
                 return $document->createElement('test', 'test');
@@ -46,10 +47,11 @@ class ArrayTypeTest extends PHPUnit_Framework_TestCase
 
         $implementationMock->expects($this->any())
             ->method('extract')
-            ->will($this->returnCallback(function(\DOMElement $element) {
-                if($element->tagName == 'test')
-
+            ->will($this->returnCallback(function (\DOMElement $element) {
+                if ($element->tagName == 'test') {
                     return $element->nodeValue;
+                }
+
                 return null;
             }));
 

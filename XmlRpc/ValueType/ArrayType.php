@@ -38,9 +38,14 @@ class ArrayType extends AbstractType
     {
         $data = array();
         $items = $this->unwrap($element, 'array')->childNodes;
+        if (!$items) {
+            return array();
+        }
+
         for ($index = 0; $index < $items->length; $index++) {
-            if(($item = $items->item($index)) instanceof \DOMElement)
+            if (($item = $items->item($index)) instanceof \DOMElement) {
                 $data[] = $this->impl->extract($item);
+            }
         }
 
         return $data;

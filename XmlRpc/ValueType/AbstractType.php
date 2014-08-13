@@ -46,9 +46,9 @@ abstract class AbstractType implements TypeInterface
 
     public function unwrap(\DOMElement $element, $wrapName = null)
     {
-        if($wrapName != null)
-            if($element->tagName != $wrapName)
+        if ($wrapName != null && $element->tagName != $wrapName) {
                 throw new \Exception("Element must be wrapped into '$wrapName' instead of '{$element->tagName}'");
+        }
 
         return $element->firstChild;
     }

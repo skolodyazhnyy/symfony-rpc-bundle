@@ -27,6 +27,18 @@ class ImplementationMethodCallTest extends PHPUnit_Framework_TestCase
                         <i4>41</i4>
                     </value>
                 </param>
+                <param>
+                    <value>
+                        <array>
+                            <data>
+                                <value><i4>12</i4></value>
+                                <value><string>Egypt</string></value>
+                                <value><boolean>0</boolean></value>
+                                <value><i4>-31</i4></value>
+                            </data>
+                       </array>
+                    </value>
+                </param>
             </params>
         </methodCall>
         ";
@@ -40,7 +52,7 @@ class ImplementationMethodCallTest extends PHPUnit_Framework_TestCase
         $methodCall = $impl->createMethodCall($requestMock);
 
         $this->assertEquals("examples.getStateName", $methodCall->getMethodName());
-        $this->assertEquals(array(41), $methodCall->getParameters());
+        $this->assertEquals(array(41, array(12, 'Egypt', false, -31)), $methodCall->getParameters());
     }
 
     public function testExtractingCallWithoutParameters()

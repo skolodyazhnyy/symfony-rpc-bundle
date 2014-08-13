@@ -21,7 +21,6 @@ use Seven\RpcBundle\Rpc\Method\MethodCall;
 use Seven\RpcBundle\Rpc\Method\MethodResponse;
 use Seven\RpcBundle\Rpc\Method\MethodFault;
 use Seven\RpcBundle\Rpc\Method\MethodReturn;
-use Seven\RpcBundle\XmlRpc\ValueType;
 use Seven\RpcBundle\XmlRpc\ValueType\AbstractType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -45,11 +44,14 @@ class Implementation extends BaseImplementation
         $document = new \DOMDocument();
         // Load content
         $useInternal = libxml_use_internal_errors(true);
-        if($content = $request->getContent())
+        if ($content = $request->getContent()) {
+            $document->preserveWhiteSpace = false;
             $document->loadXML($content);
+        }
+
         libxml_use_internal_errors($useInternal);
 
-        if(!$this->validateXml($document, "methodCall")) {
+        if (!$this->validateXml($document, "methodCall")) {
             throw new InvalidXmlRpcContent('The XML document has not valid XML-RPC content');
         }
 
@@ -78,9 +80,11 @@ class Implementation extends BaseImplementation
      * @throws \Seven\RpcBundle\Exception\InvalidXmlRpcContent
      */
 
-    protected function validateXml($document, $rootNodeName = null) {
-        if(!($schema = $this->getSchema()))
+    protected function validateXml($document, $rootNodeName = null)
+    {
+        if (!($schema = $this->getSchema())) {
             throw new XmlRpcSchemaNotFound('The XML-RPC methodCall schema not found');
+        }
 
         // validate schema
         $useInternal = libxml_use_internal_errors(true);
@@ -88,6 +92,7 @@ class Implementation extends BaseImplementation
         libxml_use_internal_errors($useInternal);
 
         if(!$valid || ($rootNodeName && $document->firstChild->nodeName != $rootNodeName))
+
             return false;
 
         return true;
@@ -97,14 +102,16 @@ class Implementation extends BaseImplementation
      * @return string
      */
 
-    protected function getSchema() {
-        if($this->schema === null) {
+    protected function getSchema()
+    {
+        if ($this->schema === null) {
             $fileLocator = new FileLocator(dirname(__DIR__) . "/Resources/schema");
             $this->schema = $fileLocator->locate(self::SCHEMA_NAME);
 
             if(is_array($this->schema))
                 $this->schema = reset($this->schema);
         }
+
         return $this->schema;
     }
 
@@ -150,11 +157,14 @@ class Implementation extends BaseImplementation
 
         // validate schema
         $useInternal = libxml_use_internal_errors(true);
-        if($content = $response->getContent())
+        if ($content = $response->getContent()) {
+            $document->preserveWhiteSpace = false;
             $document->loadXML($content);
+        }
+
         libxml_use_internal_errors($useInternal);
 
-        if(!$this->validateXml($document, "methodResponse")) {
+        if (!$this->validateXml($document, "methodResponse")) {
             throw new InvalidXmlRpcContent('The XML document has not valid XML-RPC content');
         }
 
@@ -163,6 +173,7 @@ class Implementation extends BaseImplementation
         // it's fault
         if ($faultEl = $xpath->query("//methodResponse/fault")->item(0)) {
             $struct = $this->extract($faultEl->firstChild);
+
             return new MethodFault(new Fault($struct['faultString'], $struct['faultCode']));
         }
 
@@ -255,8 +266,9 @@ class Implementation extends BaseImplementation
 
     protected function typeInstance($type)
     {
-        if(empty($this->types[$type]))
+        if (empty($this->types[$type])) {
             $this->types[$type] = $this->createType($type);
+        }
 
         return $this->types[$type] ?: $this->typeInstance(ValueType::String);
     }
@@ -317,10 +329,11 @@ class Implementation extends BaseImplementation
     protected function isAssociative($value)
     {
         foreach ((array) $value as $key => $value) {
-            if(!is_numeric($key)) {
+            if (!is_numeric($key)) {
                 return true;
             }
         }
+
         return false;
     }
 
@@ -336,6 +349,7 @@ class Implementation extends BaseImplementation
                 return $item;
             }
         }
+
         return $element;
     }
 

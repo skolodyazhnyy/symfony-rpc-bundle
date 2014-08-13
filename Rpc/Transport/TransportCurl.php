@@ -62,6 +62,7 @@ class TransportCurl implements TransportInterface
         if (!$responseBody) {
             $code = curl_errno($curl);
             $error = curl_error($curl);
+
             return new Response($error, $code);
         }
 
