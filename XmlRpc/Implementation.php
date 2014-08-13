@@ -43,8 +43,6 @@ class Implementation extends BaseImplementation
     public function createMethodCall(Request $request)
     {
         $document = new \DOMDocument();
-        $document->preserveWhiteSpace = false;
-
         // Load content
         $useInternal = libxml_use_internal_errors(true);
         if($content = $request->getContent())
