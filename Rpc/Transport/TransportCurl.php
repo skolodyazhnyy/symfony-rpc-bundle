@@ -11,6 +11,8 @@
 
 namespace Seven\RpcBundle\Rpc\Transport;
 
+use Seven\RpcBundle\Rpc\Exception\CurlTransportException;
+use Seven\RpcBundle\Rpc\Transport\Curl\CurlRequest;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -32,40 +34,63 @@ class TransportCurl implements TransportInterface
     }
 
     /**
-     * @param  Request  $request
+     * @param  Request $request
+     * @throws CurlTransportException
      * @return Response
      */
 
     public function makeRequest(Request $request)
     {
+        $curlRequest = $this->getCurlRequest($request);
+
+        $responseBody = $curlRequest->execute();
+        if (!$responseBody) {
+            $code = $curlRequest->getErrorNumber();
+            $error = $curlRequest->getErrorMessage();
+
+            throw new CurlTransportException($error, $code);
+        }
+
+        return new Response($responseBody);
+    }
+
+    /**
+     * @param Request $request
+     * @return Curl\CurlRequest
+     */
+    public function getCurlRequest(Request $request)
+    {
+        $options = $this->prepareOptions($request);
+
+        $curlRequest = new CurlRequest();
+        $curlRequest->setOptions($options);
+
+        return $curlRequest;
+    }
+
+    /**
+     * @param Request $request
+     * @return array
+     */
+    private function prepareOptions(Request $request)
+    {
         $options = array(
-            CURLOPT_POST                => 1,
-            CURLOPT_HEADER              => 0,
-            CURLOPT_URL                 => $request->getSchemeAndHttpHost() . $request->getRequestUri(),
-            CURLOPT_FRESH_CONNECT       => 1,
-            CURLOPT_RETURNTRANSFER      => 1,
-            CURLOPT_FORBID_REUSE        => 1,
-            CURLOPT_TIMEOUT             => 20,
-            CURLOPT_POSTFIELDS          => $request->getContent(),
-            CURLOPT_SSL_VERIFYHOST      => false,
-            CURLOPT_SSL_VERIFYPEER      => false
+            CURLOPT_POST => 1,
+            CURLOPT_HEADER => 0,
+            CURLOPT_URL => $request->getSchemeAndHttpHost() . $request->getRequestUri(),
+            CURLOPT_FRESH_CONNECT => 1,
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_FORBID_REUSE => 1,
+            CURLOPT_TIMEOUT => 20,
+            CURLOPT_POSTFIELDS => $request->getContent(),
+            CURLOPT_SSL_VERIFYHOST => false,
+            CURLOPT_SSL_VERIFYPEER => false
         );
 
         foreach ($this->options as $key => $value) {
             $options[$key] = $value;
         }
 
-        $curl = curl_init();
-        curl_setopt_array($curl, $options);
-
-        $responseBody = curl_exec($curl);
-        if (!$responseBody) {
-            $code = curl_errno($curl);
-            $error = curl_error($curl);
-
-            return new Response($error, $code);
-        }
-
-        return new Response($responseBody);
+        return $options;
     }
 }
