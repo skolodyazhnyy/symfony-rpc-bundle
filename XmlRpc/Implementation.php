@@ -223,14 +223,14 @@ class Implementation extends BaseImplementation
             $element = $this->unwrap($element);
         }
 
-        switch ($element->tagName) {
+        switch (strtolower($element->tagName)) {
             case "array":
                 return $this->typeInstance(ValueType::Set)->extract($element);
             case "base64":
                 return $this->typeInstance(ValueType::Blob)->extract($element);
             case "boolean":
                 return $this->typeInstance(ValueType::Boolean)->extract($element);
-            case "dateTime.iso8601":
+            case "datetime.iso8601":
                 return $this->typeInstance(ValueType::Date)->extract($element);
             case "double":
                 return $this->typeInstance(ValueType::Double)->extract($element);
