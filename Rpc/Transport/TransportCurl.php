@@ -84,7 +84,12 @@ class TransportCurl implements TransportInterface
             CURLOPT_TIMEOUT => 20,
             CURLOPT_POSTFIELDS => $request->getContent(),
             CURLOPT_SSL_VERIFYHOST => false,
-            CURLOPT_SSL_VERIFYPEER => false
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_CUSTOMREQUEST => "POST",
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: ' . $request->getContentType(),
+                'Content-Length: ' . strlen($request->getContent())
+            )
         );
 
         foreach ($this->options as $key => $value) {
