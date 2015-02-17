@@ -21,4 +21,9 @@ class Client extends BaseClient
         parent::__construct($webServiceUrl, new Implementation(), $transport);
     }
 
+    public function call($methodName, $parameters = array(), $id = null)
+    {
+        return $this->_call(new MethodCall($methodName, $parameters, $id));
+    }
+
 }
