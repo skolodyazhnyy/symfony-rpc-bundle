@@ -11,6 +11,7 @@
 
 namespace Seven\RpcBundle\JsonRpc;
 use Seven\RpcBundle\Rpc\Client as BaseClient;
+use Seven\RpcBundle\Rpc\Method\MethodCall;
 use Seven\RpcBundle\Rpc\Transport\TransportInterface;
 
 class Client extends BaseClient
@@ -19,6 +20,11 @@ class Client extends BaseClient
     public function __construct($webServiceUrl, TransportInterface $transport = null)
     {
         parent::__construct($webServiceUrl, new Implementation(), $transport);
+    }
+
+    public function call($methodName, $parameters = array(), $id = null)
+    {
+        return $this->_call(new MethodCall($methodName, $parameters, $id));
     }
 
 }
