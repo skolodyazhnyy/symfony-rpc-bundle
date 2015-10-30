@@ -165,7 +165,7 @@ class ImplementationMethodCallTest extends PHPUnit_Framework_TestCase
         $rpcCall = new MethodCall("examples.getStateName", array(41));
         $httpRequest = $impl->createHttpRequest($rpcCall);
 
-        $this->assertXmlStringEqualsXmlString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+        $this->assertXmlValuesEqual("<?xml version=\"1.0\" encoding=\"UTF-8\"?>
         <methodCall>
             <methodName>examples.getStateName</methodName>
             <params>
@@ -179,4 +179,18 @@ class ImplementationMethodCallTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("text/xml", $httpRequest->headers->get('Content-Type'));
     }
 
+    private function assertXmlValuesEqual($expected, $actual)
+    {
+        $expectedXml = new \DOMDocument('1.0', 'UTF-8');
+        $expectedXml->preserveWhiteSpace = false;
+        $expectedXml->formatOutput = true;
+        $expectedXml->loadXML($expected);
+
+        $actualXml = new \DOMDocument('1.0', 'UTF-8');
+        $actualXml->preserveWhiteSpace = false;
+        $actualXml->formatOutput = true;
+        $actualXml->loadXML($actual);
+
+        $this->assertEquals($expectedXml->saveXML(), $actualXml->saveXML());
+    }
 }
