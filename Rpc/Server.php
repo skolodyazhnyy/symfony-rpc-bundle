@@ -84,7 +84,7 @@ class Server implements ServerInterface
                 }
             }
         }
-        throw new MethodNotExists("Method '{$method}' are not defined");
+        throw new MethodNotExists("Method '{$method}' is not defined");
     }
 
     /**
