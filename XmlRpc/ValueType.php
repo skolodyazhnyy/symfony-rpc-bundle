@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Symfony bundle Seven/Rpc.
  *
@@ -22,5 +23,4 @@ class ValueType
     const Null     = 'null';
     const Object   = 'object';
     const String   = 'string';
-
 }

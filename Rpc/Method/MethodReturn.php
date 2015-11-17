@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Symfony bundle Seven/Rpc.
  *
@@ -17,11 +18,12 @@ class MethodReturn extends MethodResponse
     protected $returnType = null;
 
     /**
-     * @param null $returnValue
-     * @param null $returnType
-     * @param null $callId
+     * Constructor.
+     *
+     * @param string|null     $returnValue
+     * @param string|null     $returnType
+     * @param int|string|null $callId
      */
-
     public function __construct($returnValue = null, $returnType = null, $callId = null)
     {
         $this->returnType = $returnType;
@@ -30,21 +32,22 @@ class MethodReturn extends MethodResponse
     }
 
     /**
-     * @return null|string
+     * Get return value.
+     *
+     * @return string|null
      */
-
     public function getReturnValue()
     {
         return $this->returnValue;
     }
 
     /**
-     * @return null|string
+     * Get return type.
+     *
+     * @return string|null
      */
-
     public function getReturnType()
     {
         return $this->returnType;
     }
-
 }

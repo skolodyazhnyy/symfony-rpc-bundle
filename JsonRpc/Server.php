@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Symfony bundle Seven/Rpc.
  *
@@ -10,14 +11,13 @@
  */
 
 namespace Seven\RpcBundle\JsonRpc;
+
 use Seven\RpcBundle\Rpc\Server as BaseServer;
 
 class Server extends BaseServer
 {
-
     public function __construct()
     {
         parent::__construct(new Implementation());
     }
-
 }
