@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Symfony bundle Seven/Rpc.
  *
@@ -13,16 +14,28 @@ namespace Seven\RpcBundle\Rpc\Method;
 
 class MethodCall
 {
+    /**
+     * @var string
+     */
     protected $methodName;
+
+    /**
+     * @var array
+     */
     protected $parameters;
+
+    /**
+     * @var int|string|null
+     */
     protected $callId;
 
     /**
-     * @param $methodName
-     * @param array $parameters
-     * @param null  $callId
+     * Constructor.
+     *
+     * @param string          $methodName
+     * @param array           $parameters
+     * @param int|string|null $callId
      */
-
     public function __construct($methodName, $parameters = array(), $callId = null)
     {
         $this->methodName = $methodName;
@@ -31,30 +44,32 @@ class MethodCall
     }
 
     /**
+     * Get method name.
+     *
      * @return string
      */
-
     public function getMethodName()
     {
         return $this->methodName;
     }
 
     /**
+     * Get array of parameters.
+     *
      * @return array
      */
-
     public function getParameters()
     {
         return $this->parameters;
     }
 
     /**
+     * Get call id.
+     *
      * @return string|int|null
      */
-
     public function getCallId()
     {
         return $this->callId;
     }
-
 }

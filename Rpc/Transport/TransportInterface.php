@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Symfony bundle Seven/Rpc.
  *
@@ -16,12 +17,14 @@ use Symfony\Component\HttpFoundation\Response;
 
 interface TransportInterface
 {
-
     /**
-     * @param  Request  $request
+     * Make request.
+     *
+     * @param Request $request
+     *
      * @return Response
+     *
+     * @throws CurlTransportException
      */
-
     public function makeRequest(Request $request);
-
 }

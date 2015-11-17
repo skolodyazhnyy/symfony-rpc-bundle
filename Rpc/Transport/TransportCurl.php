@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Symfony bundle Seven/Rpc.
  *
@@ -20,25 +21,24 @@ class TransportCurl implements TransportInterface
 {
     /**
      * Custom options for curl.
+     *
      * @var array
      */
     protected $options;
 
     /**
      * Constructor.
+     *
      * @param array $options Custom options for curl.
      */
-    public function __construct($options = array())
+    public function __construct(array $options = array())
     {
         $this->options = $options;
     }
 
     /**
-     * @param  Request $request
-     * @throws CurlTransportException
-     * @return Response
+     * {@inheritdoc}
      */
-
     public function makeRequest(Request $request)
     {
         $curlRequest = $this->getCurlRequest($request);
@@ -55,8 +55,11 @@ class TransportCurl implements TransportInterface
     }
 
     /**
+     * Get CURL request.
+     *
      * @param Request $request
-     * @return Curl\CurlRequest
+     *
+     * @return CurlRequest
      */
     public function getCurlRequest(Request $request)
     {
@@ -69,27 +72,30 @@ class TransportCurl implements TransportInterface
     }
 
     /**
+     * Prepare options.
+     *
      * @param Request $request
+     *
      * @return array
      */
     private function prepareOptions(Request $request)
     {
         $options = array(
-            CURLOPT_POST => 1,
-            CURLOPT_HEADER => 0,
-            CURLOPT_URL => $request->getSchemeAndHttpHost() . $request->getRequestUri(),
-            CURLOPT_FRESH_CONNECT => 1,
+            CURLOPT_POST           => 1,
+            CURLOPT_HEADER         => 0,
+            CURLOPT_URL            => $request->getSchemeAndHttpHost().$request->getRequestUri(),
+            CURLOPT_FRESH_CONNECT  => 1,
             CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_FORBID_REUSE => 1,
-            CURLOPT_TIMEOUT => 20,
-            CURLOPT_POSTFIELDS => $request->getContent(),
+            CURLOPT_FORBID_REUSE   => 1,
+            CURLOPT_TIMEOUT        => 20,
+            CURLOPT_POSTFIELDS     => $request->getContent(),
             CURLOPT_SSL_VERIFYHOST => false,
             CURLOPT_SSL_VERIFYPEER => false,
-            CURLOPT_CUSTOMREQUEST => "POST",
-            CURLOPT_HTTPHEADER => array(
-                'Content-Type: ' . $request->getContentType(),
-                'Content-Length: ' . strlen($request->getContent())
-            )
+            CURLOPT_CUSTOMREQUEST  => 'POST',
+            CURLOPT_HTTPHEADER     => array(
+                'Content-Type: '.$request->getContentType(),
+                'Content-Length: '.strlen($request->getContent()),
+            ),
         );
 
         foreach ($this->options as $key => $value) {

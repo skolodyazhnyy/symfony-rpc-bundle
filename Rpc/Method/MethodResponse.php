@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Symfony bundle Seven/Rpc.
  *
@@ -13,25 +14,28 @@ namespace Seven\RpcBundle\Rpc\Method;
 
 abstract class MethodResponse
 {
-
+    /**
+     * @var int|string|null
+     */
     protected $callId = null;
 
     /**
-     * @param null $callId
+     * Constructor.
+     *
+     * @param int|string|null $callId
      */
-
     public function __construct($callId = null)
     {
         $this->callId = $callId;
     }
 
     /**
-     * @return null|string|int
+     * Get call id.
+     *
+     * @return int|string|null
      */
-
     public function getCallId()
     {
         return $this->callId;
     }
-
 }

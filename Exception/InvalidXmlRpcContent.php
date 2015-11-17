@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Symfony bundle Seven/Rpc.
  *
@@ -13,5 +14,4 @@ namespace Seven\RpcBundle\Exception;
 
 class InvalidXmlRpcContent extends  InvalidRpcContent
 {
-
 }

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Symfony bundle Seven/Rpc.
  *
@@ -10,6 +11,8 @@
  */
 
 namespace Seven\RpcBundle\Rpc;
+
+use Exception;
 use Seven\RpcBundle\Exception\UnknownMethodResponse;
 use Seven\RpcBundle\Rpc\Method\MethodCall;
 use Seven\RpcBundle\Rpc\Method\MethodFault;
@@ -22,17 +25,17 @@ use Symfony\Component\HttpFoundation\Response;
 
 class Client implements ClientInterface
 {
-
     protected $impl = null;
     protected $webServiceUrl = null;
     protected $transport;
 
     /**
-     * @param $webServiceUrl
+     * Constructor.
+     *
+     * @param string             $webServiceUrl
      * @param Implementation     $impl
      * @param TransportInterface $transport
      */
-
     public function __construct($webServiceUrl, Implementation $impl, TransportInterface $transport = null)
     {
         $this->impl = $impl;
@@ -41,43 +44,46 @@ class Client implements ClientInterface
     }
 
     /**
-     * @param $methodName
-     * @param  array             $parameters
-     * @return mixed|null|string
+     * {@inheritdoc}
      */
-
-    public function call($methodName, $parameters = array())
+    public function call($methodName, array $parameters = array())
     {
-        return $this->_call(new MethodCall($methodName, $parameters));
+        return $this->callMethod(new MethodCall($methodName, $parameters));
     }
 
     /**
-     * @param  MethodCall                                       $call
-     * @throws \Exception
-     * @throws \Seven\RpcBundle\Exception\UnknownMethodResponse
-     * @param  MethodCall                                       $call
-     * @return null|string
+     * Call MethodCall.
+     *
+     * @param MethodCall $call
+     *
+     * @return mixed
+     *
+     * @throws Exception
+     * @throws UnknownMethodResponse
      */
-
-    protected function _call(MethodCall $call)
+    protected function callMethod(MethodCall $call)
     {
-        $methodResponse = $this->_handle($call);
+        $methodResponse = $this->handleMethodCall($call);
 
-        if($methodResponse instanceof MethodFault)
+        if ($methodResponse instanceof MethodFault) {
             throw $methodResponse->getException();
-        if($methodResponse instanceof MethodReturn)
+        }
 
+        if ($methodResponse instanceof MethodReturn) {
             return $methodResponse->getReturnValue();
+        }
 
         throw new UnknownMethodResponse('Unable to determine method response type');
     }
 
     /**
-     * @param  MethodCall     $call
+     * Handle MethodCall.
+     *
+     * @param MethodCall $call
+     *
      * @return MethodResponse
      */
-
-    protected function _handle(MethodCall $call)
+    protected function handleMethodCall(MethodCall $call)
     {
         $request = $this->impl->createHttpRequest($call);
         $request = Request::create($this->webServiceUrl, 'GET', array(), array(), array(), array(), $request->getContent());
@@ -85,5 +91,4 @@ class Client implements ClientInterface
 
         return $this->impl->createMethodResponse($response);
     }
-
 }

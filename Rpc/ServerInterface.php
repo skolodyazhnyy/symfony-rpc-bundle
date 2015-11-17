@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Symfony bundle Seven/Rpc.
  *
@@ -17,18 +18,23 @@ use Symfony\Component\HttpFoundation\Response;
 interface ServerInterface
 {
     /**
-     * @param  Request  $request
+     * Handle request.
+     *
+     * @param Request $request
+     *
      * @return Response
      */
-
     public function handle(Request $request);
 
     /**
-     * @param $methodName
-     * @param $parameters
+     * Call the $method with $parameters.
+     *
+     * @param string $method
+     * @param array  $parameters
+     *
      * @return mixed
+     *
+     * @throws MethodNotExists If method is not defined.
      */
-
-    public function call($methodName, $parameters);
-
+    public function call($methodName, array $parameters);
 }

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Symfony bundle Seven/Rpc.
  *
@@ -13,13 +14,13 @@ namespace Seven\RpcBundle\Rpc;
 
 interface ClientInterface
 {
-
     /**
-     * @param $methodName
-     * @param $parameters
-     * @return mixed
+     * Call $methodName with $parameters.
+     *
+     * @param string $methodName
+     * @param array  $parameters
+     *
+     * @return mixed|null|string
      */
-
-    public function call($methodName, $parameters = array());
-
+    public function call($methodName, array $parameters = array());
 }
