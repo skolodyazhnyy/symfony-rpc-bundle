@@ -78,6 +78,7 @@ class TransportCurl implements TransportInterface
             CURLOPT_POST => 1,
             CURLOPT_HEADER => 0,
             CURLOPT_URL => $request->getSchemeAndHttpHost() . $request->getRequestUri(),
+            CURLOPT_USERPWD => $request->getUserInfo(),
             CURLOPT_FRESH_CONNECT => 1,
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_FORBID_REUSE => 1,
