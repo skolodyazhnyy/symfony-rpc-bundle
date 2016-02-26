@@ -21,7 +21,13 @@ class StringType extends AbstractType
 
     public function pack(\DOMDocument $document, $value)
     {
-        return $this->wrap($document->createElement("string", (string) $value), "value");
+        $element     = $document->createElement("string");
+        $elementText = $document->createTextNode((string) $value);
+
+        $element->appendChild($elementText);
+
+
+        return $this->wrap($element, "value");
     }
 
     /**
