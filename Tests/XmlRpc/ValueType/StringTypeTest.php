@@ -18,10 +18,10 @@ class StringTypeTest extends PHPUnit_Framework_TestCase
     public function testPacking()
     {
         $typeInstance = new StringType($this->getMock("Seven\\RpcBundle\\XmlRpc\\Implementation"));
-        $domElement = $typeInstance->pack(new \DOMDocument(), "s-t-r-i-n-g");
+        $domElement = $typeInstance->pack(new \DOMDocument(), "s-t-r-i-n-g & string");
 
         $this->assertEquals(
-            array('value' => array('string' => 's-t-r-i-n-g')),
+            array('value' => array('string' => 's-t-r-i-n-g & string')),
             array($domElement->tagName => XmlAssertHelper::xml2array($domElement))
         );
     }
@@ -30,11 +30,16 @@ class StringTypeTest extends PHPUnit_Framework_TestCase
     {
         $typeInstance = new StringType($this->getMock("Seven\\RpcBundle\\XmlRpc\\Implementation"));
         $document = new \DOMDocument();
-        $document->appendChild($valueEl = $document->createElement('string', 's-t-r-i-n-g'));
+        $valueEl = $document->createElement('string');
+        $valueElText = $document->createTextNode("s-t-r-i-n-g & string");
+
+        $valueEl->appendChild($valueElText);
+
+        $document->appendChild($valueEl);
 
         $value = $typeInstance->extract($valueEl);
 
-        $this->assertEquals('s-t-r-i-n-g', $value);
+        $this->assertEquals('s-t-r-i-n-g & string', $value);
     }
 
 }
