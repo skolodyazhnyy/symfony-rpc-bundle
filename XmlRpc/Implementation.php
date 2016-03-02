@@ -306,7 +306,7 @@ class Implementation extends BaseImplementation
             return ValueType::Null;
         } elseif (is_float($value)) {
             return ValueType::Double;
-        } elseif (is_numeric($value)) {
+        } elseif (is_int($value)) {
             return ValueType::Integer;
         } elseif (is_bool($value)) {
             return ValueType::Boolean;
