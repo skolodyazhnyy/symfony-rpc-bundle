@@ -174,7 +174,10 @@ class Implementation extends BaseImplementation
         if ($faultEl = $xpath->query("//methodResponse/fault")->item(0)) {
             $struct = $this->extract($faultEl->firstChild);
 
-            return new MethodFault(new Fault($struct['faultString'], $struct['faultCode']));
+            return is_numeric($struct['faultCode'])
+                ? new MethodFault(new Fault($struct['faultString'], $struct['faultCode']))
+                : new MethodFault(new Fault($struct['faultString']))
+            ;
         }
 
         // extract parameters
