@@ -1,5 +1,5 @@
 {
-    "name": "seven/symfony-rpc-bundle",
+    "name": "brille24/symfony-rpc-bundle",
     "description": "This Symfony bundle provide easy way to create XMLRPC server",
     "keywords": ["Symfony", "XMLRPC", "Server", "XML-RPC", "RPC", "Bundle"],
     "type": "symfony-bundle",
