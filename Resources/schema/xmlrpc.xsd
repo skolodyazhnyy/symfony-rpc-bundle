@@ -44,8 +44,6 @@
                                                 <xsd:sequence>
                                                     <xsd:element name="member"
                                                                  type="MemberType" />
-                                                    <xsd:element name="member"
-                                                                 type="MemberType" />
                                                 </xsd:sequence>
                                             </xsd:complexType>
                                         </xsd:element>
@@ -67,9 +65,10 @@
 
     <xsd:complexType name="ValueType" mixed="true">
         <xsd:choice>
+            <xsd:element name="nil"           type="xsd:string" />
             <xsd:element name="i4"            type="xsd:int" />
             <xsd:element name="int"           type="xsd:int" />
-            <xsd:element name="string"        type="ASCIIString" />
+            <xsd:element name="string"        type="xsd:string" />
             <xsd:element name="double"        type="xsd:decimal" />
             <xsd:element name="base64"        type="xsd:base64Binary" />
             <xsd:element name="Base64"        type="xsd:base64Binary" />
